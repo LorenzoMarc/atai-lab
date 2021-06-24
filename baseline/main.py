@@ -2,7 +2,8 @@ from gym import Env
 from gym.spaces import Discrete, Box
 import numpy as np
 import random
-
+import nnModel
+from tensorflow.keras.optimizers import Adam
 
 # Env inherited from Open AI Gym
 class Grid(Env):
@@ -14,7 +15,7 @@ class Grid(Env):
         self.observation_space = Box(low=np.array([0,0]), high=np.array([5,5]), dtype=int)
 
         # start position
-        self.state = np.array([0,0])
+        self.state = np.array([0, 0])
 
         # episode length
         self.path_length = 10
@@ -91,3 +92,14 @@ for episode in range(episodes):
         n_state, reward, done, info = env.step(action)
         score += reward
     print('episode:{} Score:{}'.format(episode,score))
+
+states = env.observation_space.shape
+
+actions = env.action_space.n
+
+model = nnModel.build_model(states, actions)
+
+
+dqn = nnModel.build_agent(model, actions)
+dqn.compile(Adam(lr=1e-3), metrics=['mae'])
+dqn.fit(env, nb_steps=50000, visualize=False, verbose=1)
