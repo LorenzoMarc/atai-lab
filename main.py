@@ -1,45 +1,112 @@
-import numpy
-import tensorflow
-import rl
-from cell import Cell
+from gym import Env
+from gym.spaces import Discrete, Box
+import numpy as np
 import random
-from matplotlib import pyplot as plt
+import nnModel
+from tensorflow.keras.optimizers import Adam
 
-# TODO:
-# 1) costruzione env
-#        1.1 - griglia
-#        1.2 - mura
-# 2) agents
-#        2.1 - actions [up, down, right, left, sense]
-#        2.2 - rewards
-# 3) policy
-#        3.1 - random --> inferenza sui risultati di ricerca
-#        3.2 - complete search strategy (DFS) ---> confronto con strategia random
-# 4) Analysis:
-#        4.1 - hours to learn tasks
-#        4.2 - repeated experiments
-#        4.3 - differences of hiding strategies depending on searching strategy
+# Env inherited from Open AI Gym
+class Grid(Env):
 
-cell = Cell(2, 3)
-print(cell)
+    def __init__(self):
+        # Actions: up, down, left, right
+        self.action_space = Discrete(4)
+        # grid cells
+        self.observation_space = Box(low=np.array([0, 0]), high=np.array([5, 5]), dtype=int)
 
-actions = [0,1,2,3] #, cell.sense()]
-rnd = random.choice(actions)
+        # start position
+        self.state = np.array([0, 0])
 
-print(cell.up())
-print(cell.get_y())
-plt.grid(20)
-plt.plot(cell.get_x(), cell.get_y(), 'yo')
+        # episode length
+        self.path_length = 10
 
-plt.show()
+        self.wall = False
+
+        self.target_state = np.array([5, 5])
+
+    def step(self, action):
+        # action| path_length | state
+        # 0     |  -1         | (_, +1)
+        # 1     |  -1         | (_, -1)
+        # 2     |  -1         | (-1, _)
+        # 3     |  -1         | (+1, _)
+        if action == 0:
+            self.state[1] += 1
+            print(self.state)
+        if action == 1:
+            self.state[1] -= 1
+            print(self.state)
+        if action == 2:
+            self.state[0] -= 1
+            print(self.state)
+        if action == 3:
+            self.state[0] += 1
+            print(self.state)
+
+        # Reduce path length by 1
+        self.path_length -= 1
 
 
+        # Check this distance. Choose appropriate distance measure
+        target_distance = np.linalg.norm(self.state - self.target_state)
 
-'''
-def grid(self, num_rows, num_cols, num_walls):
+        # Calculate reward
+        if target_distance <= 2:
+            reward = 1
+        else:
+            reward = -1
 
-    self.rows = num_rows
-    self.cols = num_cols
-    self.walls = num_walls
-    return
-'''
+            # Check if search is done
+        if self.path_length <= 0:
+            done = True
+        else:
+            done = False
+
+        # Set placeholder for info
+        info = {}
+
+        # Return step information
+        return self.state, reward, done, info
+
+    def render(self):
+        # Implement viz
+        pass
+
+    def reset(self):
+        # Reset path temperature
+        self.state = np.array([0, 0])
+        # Reset path
+        self.path_length = 10
+        return self.state
+
+env = Grid()
+
+episodes = 10
+
+for episode in range(episodes):
+    state = env.reset()
+    done = False
+    score = 0
+
+    while not done:
+        env.render()
+        action = env.action_space.sample()
+        n_state, reward, done, info = env.step(action)
+        while n_state[0] < 0 or n_state[1] < 0:
+            env.reset()
+            action = env.action_space.sample()
+            n_state, reward, done, info = env.step(action)
+        score += reward
+    print('episode:{} Score:{}'.format(episode,score))
+
+states = env.observation_space.shape
+print(states)
+actions = env.action_space.n
+print(actions)
+
+model = nnModel.build_model(states, actions)
+
+dqn = nnModel.build_agent(model, actions)
+dqn.compile(Adam(lr=1e-3), metrics=['mae'])
+dqn.fit(env, nb_steps=50000, visualize=False, verbose=1)
+

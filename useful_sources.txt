@@ -1,0 +1,12 @@
+CHECK THESE RESOURCES:
+
+ATAI_LESSON_2.PDF
+
+STML Lezione RL 2020.pdf e lezione correlata
+
+https://medium.com/analytics-vidhya/introduction-to-reinforcement-learning-q-learning-by-maze-solving-example-c34039019317
+
+https://www.makeschool.com/mediabook/oa/tutorials/trees-and-mazes/generating-a-maze-with-dfs/
+
+https://www.youtube.com/watch?v=psDlXfbe6ok
+
