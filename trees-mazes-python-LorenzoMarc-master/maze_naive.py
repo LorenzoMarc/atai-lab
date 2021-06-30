@@ -2,7 +2,7 @@ from queue import LifoQueue
 from PIL import Image
 import numpy as np
 from random import choice
-
+import agents
 
 def generate_maze(width, height):
     maze = Image.new('RGB', (2 * width + 1, 2 * height + 1), 'black')
@@ -65,9 +65,10 @@ def maze(iteration_number, multiplicative_factor):
     parser.add_argument('--output', '-o', nargs='?', type=str, default=img)
     args = parser.parse_args()
     size = (args.width, args.height) if args.height else (args.width*multiplicative_factor, args.width*multiplicative_factor)
-    #size = size*(iteration_number+1)
     maze = generate_maze(*size)
     maze.save(args.output)
+    agents.setagent(args.output, (size[0] * 2, size[1] * 2))
+
 
 
 import sys
