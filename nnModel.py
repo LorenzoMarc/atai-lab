@@ -10,9 +10,10 @@ from rl.memory import SequentialMemory
 from tensorflow.python.keras.layers import Reshape
 
 
-def build_model(states, actions):
+def build_model(x,y, actions):
     model = Sequential()
-    model.add(Dense(32, activation='relu', input_shape=(2,)))
+    model.add(Flatten(input_shape=(2, x, y)))
+    model.add(Dense(64, activation='relu'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(actions, activation='linear'))
     return model

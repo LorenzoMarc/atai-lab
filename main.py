@@ -5,6 +5,29 @@ import random
 import nnModel
 from tensorflow.keras.optimizers import Adam
 
+#########################################################################
+'''
+ TODO: 
+    Task 1:
+    - Fix Seeker policy, movements are defined and his utilities too.
+    - Seeker KNOWS Hider's position
+    - Assume Hider knows where Seeker is
+    - Learn strategy to maximize HIDING
+    
+    Task 2: 
+    - Hider has fixed policy and Seeker has to find him
+    - Hider has random policy and Seeker has to find him
+    - Differences between the two results
+    
+    Extra Task:
+    - Explorative operations on maze with one/two approaches:
+        ° TOP-DOWN (DFS or BFS)
+        ° CLP   
+    - Possible graphical presentation with pygame and tutorial
+
+'''
+
+
 # Env inherited from Open AI Gym
 class Grid(Env):
 
@@ -12,7 +35,7 @@ class Grid(Env):
         # Actions: up, down, left, right
         self.action_space = Discrete(4)
         # grid cells
-        self.observation_space = Box(low=np.array([0, 0]), high=np.array([5, 5]), dtype=int)
+        self.observation_space = Box(low=np.array([0, 0]), high=np.array([5,5]), dtype=int)
 
         # start position
         self.state = np.array([0, 0])
@@ -51,7 +74,9 @@ class Grid(Env):
         target_distance = np.linalg.norm(self.state - self.target_state)
 
         # Calculate reward
-        if target_distance <= 2:
+        if self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
+            reward = 100
+        elif target_distance <= 2:
             reward = 1
         else:
             reward = -1
@@ -92,19 +117,19 @@ for episode in range(episodes):
         env.render()
         action = env.action_space.sample()
         n_state, reward, done, info = env.step(action)
-        while n_state[0] < 0 or n_state[1] < 0:
-            env.reset()
-            action = env.action_space.sample()
-            n_state, reward, done, info = env.step(action)
         score += reward
-    print('episode:{} Score:{}'.format(episode,score))
+    print('episode:{} Score:{}'.format(episode, score))
 
-states = env.observation_space.shape
-print(states)
+
+x, y = env.observation_space.sample()
+print(x,y)
+exit(1)
 actions = env.action_space.n
 print(actions)
 
-model = nnModel.build_model(states, actions)
+model = nnModel.build_model(x, y, actions)
+print(model)
+
 
 dqn = nnModel.build_agent(model, actions)
 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
