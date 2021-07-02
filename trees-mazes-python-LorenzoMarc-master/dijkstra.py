@@ -116,10 +116,9 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         path = dir + '/' + image
         parser.add_argument("maze", nargs="?", type=str, default=path)
-        #parser.add_argument("maze", nargs="?", type=str, default='mazes/generated_maze_7.png')
         args = parser.parse_args()
         start = time.time()
         solve_image(args.maze)
         end = time.time() - start
-        #exit(1)
-        #print('Time taken:', end)
+        print(path)
+        print('Time taken:', end)
