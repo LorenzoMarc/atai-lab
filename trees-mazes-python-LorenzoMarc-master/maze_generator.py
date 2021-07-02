@@ -62,9 +62,7 @@ def maze(iteration_number, multiplicative_factor):
     img = 'mazes/generated_maze_' + str(iteration_number + 1) + '.png'
     parser.add_argument('--output', '-o', nargs='?', type=str, default=img)
     args = parser.parse_args()
-    #size = (args.width, args.height) if args.height else (args.width*multiplicative_factor, args.width*multiplicative_factor)
-    size = (args.width, args.height) if args.height else (int(args.width / multiplicative_factor), int(args.width / multiplicative_factor))
-
+    size = (args.width, args.height) if args.height else (args.width*multiplicative_factor, args.width*multiplicative_factor)
     maze = generate_maze(*size)
     maze.save(args.output)
     agents.setagent(args.output)
@@ -83,6 +81,7 @@ def main(unused_command_line_args):
            mul = mul + 1
            factor = factor*2 + 1
         maze(i, mul)
+
     return 0
 
 if __name__ == '__main__':

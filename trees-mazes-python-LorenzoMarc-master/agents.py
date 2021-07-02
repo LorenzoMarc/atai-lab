@@ -11,5 +11,4 @@ def setagent(path):
     redagent = where[random_position][:-1]
     cv2.circle(img, (1,0), 0, (255,0,0), -1) #BGR
     cv2.circle(img, (redagent[1], redagent[0]), 0, (0, 0, 255), -1)  # BGR
-    print((redagent[1], redagent[0]))
     cv2.imwrite(path,img)

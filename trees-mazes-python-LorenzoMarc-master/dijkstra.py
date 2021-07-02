@@ -53,8 +53,8 @@ def run_dijkstra_algorithm(start_node, nodes) -> None:
 
 
 def get_path_from_node(node: Node) -> List[Node]:
-    """Returns the list of nodes which lead from a
-    specific node to the start node."""
+    '''Returns the list of nodes which lead from a
+    specific node to the start node'''
     path = []
     while node:
         path.append(node)
@@ -90,7 +90,7 @@ def colour_path(image, path) -> None:
 
 
 def solve_image(file_path) -> None:
-    """Solves a maze image file and outputs the solution in the same folder."""
+    '''Solves a maze image file and outputs the solution in the Results folder.'''
     image = Image.open(file_path)
     start_node, finish_node, nodes = nodes_from_maze(image)
 
@@ -120,5 +120,5 @@ if __name__ == "__main__":
         start = time.time()
         solve_image(args.maze)
         end = time.time() - start
-        print(path)
+        print(image)
         print('Time taken:', end)
