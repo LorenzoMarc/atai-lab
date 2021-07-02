@@ -10,7 +10,6 @@ def generate_maze(width, height):
 
     # Create a path on the very top and bottom so that it has an entrance/exit
     pixels[1, 0] = (255, 255, 255)
-    pixels[-2, -1] = (255, 255, 255)
 
     stack = LifoQueue()
     cells = np.zeros((width, height))
@@ -32,7 +31,6 @@ def generate_maze(width, height):
 
         if adjacents:
             stack.put((x, y))
-
             neighbour = choice(adjacents)
             neighbour_on_img = (neighbour[0] * 2 + 1, neighbour[1] * 2 + 1)
             current_on_img = (x * 2 + 1, y * 2 + 1)
@@ -64,10 +62,12 @@ def maze(iteration_number, multiplicative_factor):
     img = 'mazes/generated_maze_' + str(iteration_number + 1) + '.png'
     parser.add_argument('--output', '-o', nargs='?', type=str, default=img)
     args = parser.parse_args()
-    size = (args.width, args.height) if args.height else (args.width*multiplicative_factor, args.width*multiplicative_factor)
+    #size = (args.width, args.height) if args.height else (args.width*multiplicative_factor, args.width*multiplicative_factor)
+    size = (args.width, args.height) if args.height else (int(args.width / multiplicative_factor), int(args.width / multiplicative_factor))
+
     maze = generate_maze(*size)
     maze.save(args.output)
-    agents.setagent(args.output, (size[0] * 2, size[1] * 2))
+    agents.setagent(args.output)
 
 
 
