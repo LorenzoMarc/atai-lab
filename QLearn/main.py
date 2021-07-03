@@ -2,10 +2,9 @@ from gym import Env
 from gym.spaces import Discrete, Box
 import numpy as np
 import random
-import nnModel
-from tensorflow.keras.optimizers import Adam
 
-#########################################################################
+import matplotlib
+
 '''
  TODO: 
     Task 1:
@@ -27,18 +26,10 @@ from tensorflow.keras.optimizers import Adam
 
 '''
 
-def policy (state):
-    #state = [0 0] stato iniziale
-    #Target state = 5,5
-    #for i in
-
-
-
-    return None
-
-
-max_grid_length = 5
+max_grid_length = 4
 starting_grid_pos = 0
+episode_length = 100
+
 # Env inherited from Open AI Gym
 class Grid(Env):
 
@@ -52,25 +43,24 @@ class Grid(Env):
         # start position
         self.state = np.array([starting_grid_pos,starting_grid_pos])
 
-        # episode length
-        self.path_length = 500
+        # starting episode length
+        self.path_length = 1
 
         self.wall = False
 
-        self.target_state = np.array([max_grid_length,max_grid_length])
+        self.target_state = np.array([max_grid_length, max_grid_length])
+
 
     def step(self, action):
         # action| path_length | state
-        # 0     |  -1         | (_, +1)
-        # 1     |  -1         | (_, -1)
-        # 2     |  -1         | (-1, _)
-        # 3     |  -1         | (+1, _)
-        #selfe.state è nella forma [x,y]
+        # 0     |  +1         | (_, +1)
+        # 1     |  +1         | (_, -1)
+        # 2     |  +1         | (-1, _)
+        # 3     |  +1         | (+1, _)
+        #self.state è nella forma [x,y]
 
         #Calcolo distanza euclidea del "vecchio stato":
         old_target_distance = np.linalg.norm(self.state - self.target_state)
-
-
 
         if action == 0: #GO UP
             self.state[1] += 1
@@ -136,28 +126,30 @@ class Grid(Env):
                 next_state, reward, done, info = env.step(action)
                 #print("New action: ", action, " new state: ", next_state, " self.state: ", self.state)
 
-        # Reduce path length by 1
-        self.path_length -= 1
+        # Grow path length by 1
+        self.path_length += 1
 
 
         # Calculate the euclidian distance from the current stat to the target state
         #Calcolo la distanza euclidea del nuovo stato
         new_target_distance = np.linalg.norm(self.state - self.target_state)
-        print ("new_target_distance: ", new_target_distance, " old_target_distance: ", old_target_distance)
+        print("new_target_distance: ", new_target_distance, " old_target_distance: ", old_target_distance)
 
         # Calculate reward
         if self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
             reward = 100
+            print("TARGET STATE RAGGIUNTO, termine episodio")
         elif new_target_distance <= old_target_distance:
             reward = -1
         else:
             reward = 1
 
-
-
-            # Check if search is done
-        if self.path_length <= 0:
+         # Check if search is done
+        if self.path_length > episode_length:
             done = True
+        elif self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
+            #Se arrivo nello stato target allora l'episodio termina
+            done= True
         else:
             done = False
 
@@ -175,25 +167,26 @@ class Grid(Env):
         # Reset path temperature
         self.state = np.array([0, 0])
         # Reset path
-        self.path_length = 10
+        self.path_length = 1
         return self.state
 
 ########## END GRID CLASS ##################
 
 #Crea un'istanza della classe Grid
 env = Grid()
+print("OBSERVATION SPACE: ", env.observation_space.shape)
+print("OBSERVATION SAMPLE: ", env.observation_space.sample())
 
-
-episodes = 20
+episodes = 10
 
 # Initialize q-table values to 0
 # Q = np.zeros((state_size, action_size)). state_size = matrice "appiattita"
 # ho 25 possibili stati e 4 possibili azioni
-Q_table = np.zeros(shape=(26, 4), dtype=float)
-print ("Initial Q_table: ", Q_table, print( "lunghezza asse x q table: ", len(Q_table[0])))
+#Q_table = np.zeros(shape=(26, 4), dtype=float)
+#print ("Initial Q_table: ", Q_table, print( "lunghezza asse x q table: ", len(Q_table[0])))
 
 #Learning rate: how much you accept the new value vs the old value.
-lr = 0.1
+lr = 0.8
 
 #Gamma: discount factor
 gamma = 0.9
@@ -215,16 +208,18 @@ def update_qtable(state, action, reward, new_state):
     #Q_table[state,action] = Q_table[state, action] + (lr * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state,action]))
     Q_table[state,action] += lr * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state,action])
 
-    print ("valore q_value aggiornato: ", Q_table[state,action], " nello stato: ", state, " con l'azione: ", action ,
+    print("valore q_value aggiornato: ", Q_table[state, action], " nello stato: ", state, " con l'azione: ", action,
            "new state: ", new_state)
-    return  Q_table
+    return Q_table
 
 #Mappa gli stati della matrice dell'enviorment in un vettore lungo 25, come i tutti i possibili stati
 def mapping_state (next_state):
     #[0,0] -> 0; [0,1] -> 1 ... [1,0] -> 5
+    #[3,3] -> 18
     # Se cambio la riga allora faccio +/- 5, se cambio la colonna +/- 1
     #print("mapping_state:  next_State[0]: ", next_state[0], " next_state[1]: ", next_state[1])
-    new_pos= (next_state[1] * 4) + (next_state[0] * 1)
+
+    new_pos= (next_state[1] * 5) + (next_state[0] * 1)
     #vect = np.arange(24) #array di 25 elementi
 
     #Per tornare alla matrice 5x5
@@ -235,7 +230,11 @@ for episode in range(episodes):
     state = env.reset()
     done = False
     score = 0
-    #La q_table rimane la stessa con episodi diversi
+    #La q_table rimane la stessa con episodi diversi FAKE NEWS
+    #qtable_dimension = max_grid_length * max_grid_length
+
+    # Resett Q_table ad ogni episodio
+    Q_table = np.zeros(shape=(25, 4), dtype=float)
 
     print ("######### NEW EPISODE ################")
 
@@ -248,19 +247,24 @@ for episode in range(episodes):
         #states = 0
         #action = None
         # Set the percent you want to explore | epsilon =0.2
-        print( "Q TABLE: \n", Q_table)
-        epsilon = 0.2
+
+        epsilon = 1/env.path_length
+        not_epislon = 1 - (1/env.path_length)
+        print('#########STEP:{}'.format(env.path_length))
+        print("Probabilità di exploration: ", epsilon, " Probabilità di exploitation: ", not_epislon)
+        print("Q TABLE: \n", Q_table)
+
         if random.uniform(0, 1) < epsilon:
             """ Explore: select a random action   """
             # Instead of selecting actions based on the max future reward we select an action at random.
             #action = env.action_space.sample()
             action = random.choice(env.action_space)
-            state2= mapping_state(state)
-            print ("action by exploring: ", action)
+            state2 = mapping_state(state)
+            print("action by exploring: ", action)
             next_state, reward, done, info = env.step(action)
-            mapped_state= mapping_state(next_state)
-            #print("mapped actual state: ", state2, "cartesian actual state: ", state,
-              #    " action/index to do: ", action)
+            mapped_state = mapping_state(next_state)
+            print("mapped actual state: ", state2, "cartesian actual state: ", state,
+                " action/index to do: ", action)
             # print ( "new state: ", next_state, "mapped new state: ", mapping_state(next_state))
             # Aggiorna la Q_table
             new_Qtable = update_qtable(state2, action, reward, mapped_state)
@@ -286,7 +290,6 @@ for episode in range(episodes):
                   "action_qvalues: ", action_qvalues, "max_action_value: ", max_action_value,
                   " action/index to do: ", action)
 
-
             next_state, reward, done, info = env.step(action)
             mapped_state = mapping_state (next_state)
             #print ("new_state: ", mapped_state, "mapped state: ", next_state, " reward: ", reward, " done: ", done)
@@ -301,18 +304,6 @@ for episode in range(episodes):
     print ("\n##################FINAL Q_table: ##################\n", Q_table)
 
 
-x, y = env.observation_space.sample()
-print(x,y)
 print ("Fine programma")
-exit(1)
-actions = env.action_space.n
-print(actions)
 
-model = nnModel.build_model(x, y, actions)
-print(model)
-
-
-dqn = nnModel.build_agent(model, actions)
-dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-dqn.fit(env, nb_steps=50000, visualize=False, verbose=1)
 
