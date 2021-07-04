@@ -9,7 +9,20 @@ max_grid_length = 4
 starting_grid_pos = 0
 episode_length = 500
 
+episodes = 100
+#global success_number
+global success_number
+success_number = 0
 
+
+#La Q_table resta la stessa per diversi episodi
+Q_table = np.zeros(shape=(25, 4), dtype=float)
+
+# Learning rate: how much you accept the new value vs the old value.
+lr = 0.8
+
+# Gamma: discount factor
+gamma = 0.9
 # Env inherited from Open AI Gym
 
 
@@ -21,6 +34,8 @@ class Grid(Env):
 
         # Actions: up, down, left, right
         self.action_space = Discrete(4)
+
+
         # grid cells
         self.observation_space = Box(low=np.array([starting_grid_pos, starting_grid_pos]),
                                      high=np.array([max_grid_length, max_grid_length]), dtype=int)
@@ -36,6 +51,7 @@ class Grid(Env):
         self.success = False
 
         self.target_state = np.array([max_grid_length, max_grid_length])
+
 
 
     def oracle(self, actual_state, action):
@@ -70,6 +86,7 @@ class Grid(Env):
             print("next_state: ", next_state)
             return False, next_state
         '''
+
 
 
     def step(self, action):
@@ -155,16 +172,7 @@ class Grid(Env):
 # Crea un'istanza della classe Grid
 env = Grid()
 
-episodes = 20
 
-#La Q_table resta la stessa per diversi episodi
-Q_table = np.zeros(shape=(25, 4), dtype=float)
-
-# Learning rate: how much you accept the new value vs the old value.
-lr = 0.8
-
-# Gamma: discount factor
-gamma = 0.9
 
 
 # Aggiornamento dei Q-values nella matrice Q_table
@@ -190,11 +198,11 @@ for episode in range(episodes):
     state = env.reset()
     done = False
     score = 0
+    env.action_space = np.array([0, 1, 2, 3])
+
 
     while not done:
         env.render()
-        # Ripristino il vettore delle azioni in modo da poterle eseguire tutte di nuovo
-        env.action_space = np.array([0, 1, 2, 3])
 
         epsilon = 1 / env.path_length
         not_epislon = 1 - (1 / env.path_length)
@@ -219,6 +227,9 @@ for episode in range(episodes):
                 update_qtable(state2, action, reward, next_state)
                 print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
                 print ("q-table:\n", Q_table)
+                if (reward == 10000):
+                    success_number +=1
+
                 score += reward
             else:  #ESCO DAI BOUNDARIES
                 # Aggiorna la Q_table
@@ -259,6 +270,8 @@ for episode in range(episodes):
                 update_qtable(state2, action, reward, state2)
                 print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
                 print("q-table:\n", Q_table)
+                if (reward == 10000):
+                    success_number +=1
                 score += reward
             else: #ESCO DAI BOUNDARIES
                 reward = -100
@@ -282,4 +295,5 @@ for episode in range(episodes):
 
     print('EPISODE:{} SCORE:{} STEP:{}, SUCCESS:{} \nFINAL Q_table:{}'.format(episode, score, env.path_length, env.success, Q_table))
 
-print("Fine programma")
+success_rate = success_number / episodes
+print("Fine programma, success_rate: ", success_rate * 100, "%", "su ", episodes, " episodi")
