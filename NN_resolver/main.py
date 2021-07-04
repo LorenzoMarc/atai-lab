@@ -4,10 +4,21 @@ import numpy as np
 import nnModel
 import random
 import math
-
 from tensorflow.keras.optimizers import Adam
+import time
+from tensorflow.keras.callbacks import Callback
 
-#########################################################################
+import matplotlib.pyplot as plt
+class TimeHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.times = []
+
+    def on_epoch_begin(self, epoch, logs={}):
+        self.epoch_time_start = time.time()
+
+    def on_epoch_end(self, epoch, logs={}):
+        self.times.append(time.time() - self.epoch_time_start)
+
 '''
 TASK: 
 
@@ -24,22 +35,22 @@ Elements:
 # Grid is a representation of 5x5 dimension
 class Grid(Env):
 
-    def __init__(self):
+    def __init__(self, walls_array, max_dim, path_length):
         # Actions: up, down, left, right
         self.action_space = np.array([0, 1, 2, 3])
         # grid cells as flatten array
-        self.observation_space = Box(low=np.array([0]), high=np.array([24]), dtype=int)
-
+        self.observation_space = Box(low=np.array([0]), high=np.array([max_dim]), dtype=int)
+        #self.observation_space = proviamo.setarray('mazes/generated_maze_1.png')
         # start position
         self.state = np.array([0])
 
         # episode length
-        self.path_length = 1000
+        self.path_length = path_length
         # agent2 or maze's exit
-        self.target_state = np.array([24])
+        self.target_state = np.array([max_dim])
 
         # subset of walls
-        self.walls_states = [1, 6, 11, 13, 18, 23]
+        self.walls_states = walls_array
 
     def step(self, action):
         # action| path_length | state
@@ -64,15 +75,19 @@ class Grid(Env):
 
         # Calculate reward if target state is reached
         if self.state == self.target_state:
-            reward = 500
+            reward = 1500
+            #print("TARGET HIT!")
         # decrease reward if a wall is hit
-        elif [self.state == x for x in self.walls_states]:
-            reward = -1
+        elif self.state in self.walls_states:
+            reward = -2000
+            #print("WALL HIT!")
         # decrease reward if negative state(out of env)
-        elif self.state < 0:
-            reward = -1
+        elif self.state < 0 or self.state> max_dim:
+            reward = -200
+            #print("OUT OF BOUNDS")
         else:
             reward = 0
+            #print("AVAILABLE PATH")
 
         # Check if episode is done
         if self.path_length <= 0 or self.state == self.target_state:
@@ -94,15 +109,22 @@ class Grid(Env):
         # Reset path temperature
         self.state = np.array(0)
         # Reset path
-        self.path_length = 10
+        self.path_length =1000
         return self.state
 
 
-env = Grid()
+walls = [1, 9, 17, 25, 5, 13, 21, 60, 52, 44, 58]
+max_dim = 64
+path_length = 1000
+#require 'walls' array: the states where walls are
+# require maximum state ( e.g.: a matrix 5x5 has 0..24 states, so 24 is max)
+# require path length --> number of steps available to the agent per episode
+env = Grid(walls, max_dim, path_length)
+
 
 '''
 # Random walk on maze in 100 episodes
-episodes = 100
+episodes = 20
 
 for episode in range(episodes):
     state = env.reset()
@@ -132,20 +154,57 @@ for episode in range(episodes):
         action = random.choice(env.action_space)
         n_state, reward, done, info = env.step(action)
         score += reward
-    #print('episode:{} Score:{}'.format(episode, score))
+    print('episode:{} Score:{}'.format(episode, score))
 '''
 # Input for NN model and agent
 states = env.observation_space.shape
 actions = len(env.action_space)
-# Dense Net is build with status
+# Dense Net is build with states and actions
 model = nnModel.build_model(states, actions)
+
 model.summary()
 
 # Deep Q agent is built, compiled with the network
 # and fitted in the env. It have been trained for 50000 steps.
 # Test scores are calculated in 100 episodes
+time_callback = TimeHistory()
 dqn = nnModel.build_agent(model, actions)
 dqn.compile(Adam(lr=1e-3), metrics=['mae'])
-dqn.fit(env, nb_steps=5000, visualize=False, verbose=1)
-scores = dqn.test(env, nb_episodes=100, visualize=False)
+scores = dqn.fit(env, nb_steps=50000, visualize=False, verbose=2,
+                 callbacks=[time_callback])
+
+print(scores.history['episode_reward'])
+
+print(time_callback.times)
+
+
+plt.plot(time_callback.times)
+# naming the x and y axis
+plt.xlabel('Number of Episodes')
+plt.ylabel('Computation time per episode (sec)')
+
+# plotting a line plot after changing it's width and height
+f = plt.figure()
+f.set_figwidth(16)
+f.set_figheight(9)
+plt.show()
+
+plt.hist(time_callback.times)
+plt.show()
+
+scores = dqn.test(env, nb_episodes=10, visualize=False, callbacks=[time_callback])
 print(np.mean(scores.history['episode_reward']))
+
+print(time_callback.times)
+
+plt.plot(time_callback.times)
+# naming the x and y axis
+plt.xlabel('Number of Episodes')
+plt.ylabel('Computation time per episode (sec)')
+
+# plotting a line plot after changing it's width and height
+f = plt.figure()
+f.set_figwidth(16)
+f.set_figheight(9)
+plt.show()
+dqn.save_weights('dqn_weights.h5f', overwrite=True)
