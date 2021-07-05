@@ -7,8 +7,9 @@ import math
 from tensorflow.keras.optimizers import Adam
 import time
 from tensorflow.keras.callbacks import Callback
-
 import matplotlib.pyplot as plt
+
+
 class TimeHistory(Callback):
     def on_train_begin(self, logs={}):
         self.times = []
@@ -76,18 +77,18 @@ class Grid(Env):
         # Calculate reward if target state is reached
         if self.state == self.target_state:
             reward = 1500
-            #print("TARGET HIT!")
+            # print("TARGET HIT!")
         # decrease reward if a wall is hit
         elif self.state in self.walls_states:
             reward = -2000
-            #print("WALL HIT!")
+            # print("WALL HIT!")
         # decrease reward if negative state(out of env)
-        elif self.state < 0 or self.state> max_dim:
-            reward = -200
-            #print("OUT OF BOUNDS")
+        elif self.state < 0 or self.state > max_dim:
+            reward = -2000
+            # print("OUT OF BOUNDS")
         else:
             reward = 0
-            #print("AVAILABLE PATH")
+            # print("AVAILABLE PATH")
 
         # Check if episode is done
         if self.path_length <= 0 or self.state == self.target_state:
@@ -109,18 +110,16 @@ class Grid(Env):
         # Reset path temperature
         self.state = np.array(0)
         # Reset path
-        self.path_length =1000
+        self.path_length =500
         return self.state
-
 
 walls = [1, 9, 17, 25, 5, 13, 21, 60, 52, 44, 58]
 max_dim = 64
-path_length = 1000
+path_length = 500
 #require 'walls' array: the states where walls are
 # require maximum state ( e.g.: a matrix 5x5 has 0..24 states, so 24 is max)
 # require path length --> number of steps available to the agent per episode
 env = Grid(walls, max_dim, path_length)
-
 
 '''
 # Random walk on maze in 100 episodes

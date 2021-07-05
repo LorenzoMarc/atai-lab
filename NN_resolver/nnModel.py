@@ -15,7 +15,7 @@ def build_model(states, actions):
     model = Sequential()
     model.add(Dense(64, activation='relu', input_shape=states))
     model.add(Dense(32, activation='relu'))
-    model.add(Dense(actions, activation='softmax'))
+    model.add(Dense(actions, activation='linear'))
 
     return model
 
@@ -26,6 +26,6 @@ def build_agent(model, actions):
     policy = BoltzmannQPolicy()
     # policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., value_min=.1, value_test=.2, nb_steps=1000)
     memory = SequentialMemory(limit=5000, window_length=1)
-    dqn = DQNAgent(model=model, memory=memory, policy=policy, nb_actions=actions, nb_steps_warmup=1000,
+    dqn = DQNAgent(model=model, memory=memory, policy=policy, nb_actions=actions, nb_steps_warmup=100,
                    target_model_update=1e-2)
     return dqn
