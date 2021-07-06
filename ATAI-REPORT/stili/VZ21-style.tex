@@ -1,0 +1,38 @@
+\documentclass{memoir}
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+\usepackage{calc,fourier}
+\usepackage[T1]{fontenc}
+\makeatletter
+\setlength\midchapskip{7pt}
+\makechapterstyle{VZ21}{
+  \renewcommand\chapnamefont{\Large\scshape}
+  \renewcommand\chapnumfont{\Large\scshape\centering}
+  \renewcommand\chaptitlefont{\huge\bfseries\centering}
+  \renewcommand\printchaptertitle[1]{%
+    \setlength\tabcolsep{7pt}% used as indentation on both sides
+    \settowidth\@tempdimc{\chaptitlefont ##1}%
+    \setlength\@tempdimc{\textwidth-\@tempdimc-2\tabcolsep}%
+    \chaptitlefont
+    \ifdim\@tempdimc > 0pt\relax% one line
+    \begin{tabular}{c}
+      \toprule  ##1\\ \bottomrule
+    \end{tabular}
+    \else% two+ lines
+    \begin{tabular}{%
+        >{\chaptitlefont\arraybackslash}p{\textwidth-2\tabcolsep}}
+      \toprule ##1\\ \bottomrule
+    \end{tabular}
+    \fi
+  }
+}
+\makeatother
+\chapterstyle{VZ21}
+\STOPCODE
+\setlength\afterchapskip {\onelineskip }
+\setlength\beforechapskip {\onelineskip }
+\usepackage{lipsum}
+\begin{document}
+\input{chapterexample.tex}
+\end{document}

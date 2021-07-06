@@ -1,0 +1,250 @@
+%!TEX encoding = UTF-8 Unicode
+%\usepackage[latin1]{inputenc}
+\usepackage[utf8x]{inputenc}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+\usepackage[T1]{fontenc}
+\usepackage[english, italian]{babel}
+\selectlanguage{english}
+\usepackage{amsmath}
+\usepackage[export]{adjustbox}
+\usepackage{amssymb,amsfonts,textcomp}
+%\usepackage{graphicx}
+%\graphicspath{ {tesi-img/} }
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{array}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+    linkcolor=black,
+    citecolor=blue,
+	filecolor=black,      
+	urlcolor=blue,
+	pdftitle={Sharelatex Example},
+	bookmarks=true,
+	pdfpagemode=FullScreen,
+}
+%\usepackage{listings}%per aggiungere codice matlab
+%\usepackage{mcode}%per aggiungere codice matlab
+\usepackage{empheq}
+\usepackage{supertabular}
+\usepackage{hhline}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{subfig}
+
+
+\usepackage{tabularx}
+\newcolumntype{s}{>{\hsize=.5\hsize}X}
+
+
+\usepackage{pdfpages}%per aggiungere pagine in pdf tipo frontespizio
+%pdf con riferimenti colorati
+%\hypersetup{ colorlinks=true, linkcolor=blue, citecolor=blue, filecolor=blue, urlcolor=blue, pdftitle=, pdfauthor=Priolo Davide, pdfsubject=, pdfkeywords=}%pdf con riferimenti colorati
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SWIFT %%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{gray}{rgb}{0.4,0.4,0.4}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+\definecolor{lightblue}{rgb}{0.0,0.0,0.9}
+\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+\definecolor{darkred}{rgb}{0.6,0.0,0.0}
+\definecolor{pink}{rgb}{1,0.2,0.58}
+
+
+\lstset{
+	basicstyle=\ttfamily\footnotesize,
+	columns=fullflexible,
+	showstringspaces=false,
+	%numbers=left,                   % where to put the line-numbers
+	numberstyle=\tiny\color{gray},  % the style that is used for the line-numbers
+	stepnumber=1,
+	numbersep=5pt,                  % how far the line-numbers are from the code
+	backgroundcolor=\color{white},      % choose the background color. You must add \usepackage{color}
+	showspaces=false,               % show spaces adding particular underscores
+	showstringspaces=false,         % underline spaces within strings
+	showtabs=false,                 % show tabs within strings adding particular underscores
+	frame=none,                   % adds a frame around the code
+	rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+	tabsize=2,                      % sets default tabsize to 2 spaces
+	captionpos=b,                   % sets the caption-position to bottom
+	breaklines=true,                % sets automatic line breaking
+	breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+	title=\lstname,                   % show the filename of files included with \lstinputlisting;
+	% also try caption instead of title  
+	commentstyle=\color{gray}\upshape
+}
+
+
+\lstdefinelanguage{XML}
+{
+	morestring=[s][\color{mauve}]{"}{"},
+	morestring=[s][\color{black}]{>}{<},
+	morecomment=[s]{<?}{?>},
+	morecomment=[s][\color{dkgreen}]{!--}{--},
+	stringstyle=\color{black},
+	identifierstyle=\color{pink},
+	keywordstyle=\color{red},
+	morekeywords={xmlns,xsi,noNamespaceSchemaLocation,type,id,x,y,source,target,version,tool,transRef,roleRef,objective,eventually}% list your attributes here
+}
+
+%\usepackage{listings}
+ %\usepackage{xcolor}
+%\lstdefinelanguage{swift}
+%{
+%	morekeywords={
+%		open,catch,@escaping,nil,throws,func,if,then,else,for,in,while,do,switch,case,where,break,continue,fallthrough,return,
+%		typealias,struct,class,enum,protocol,var,func,let,get,set,willSet,didSet,inout,init,deinit,extension,
+%		subscript,prefix,operator,infix,postfix,precedence,associativity,left,right,none,convenience,dynamic,
+%		final,lazy,mutating,nonmutating,optional,override,required,static,unowned,safe,weak,internal,
+%		private,public,is,as,self,unsafe,dynamicType,true,false,nil,Type,Protocol, try, catch
+%	},
+%	morecomment=[l]{//}, % l is for line comment
+%	morecomment=[s]{/*}{*/}, % s is for start and end delimiter
+%	morestring=[b]", % defines that strings are enclosed in double quotes
+%	breaklines=true,
+%	escapeinside={\%*}{*)},
+%	numbers=left,
+%	captionpos=b,
+%	breakatwhitespace=true,
+%	basicstyle=\linespread{1.0}\ttfamily\footnotesize, % https://tex.stackexchange.com/a/102728/129441
+%}
+%
+%\definecolor{keyword}{HTML}{BA2CA3}
+%\definecolor{string}{HTML}{D12F1B}
+%\definecolor{comment}{HTML}{008400}
+%
+%\lstset{
+%	frame=tb,
+%	language=swift,
+%	basicstyle=\ttfamily\small,
+%	breaklines=true,
+%	breakatwhitespace=true,
+%	showstringspaces=false, % lets spaces in strings appear as real spaces
+%	columns=fixed,
+%	keepspaces=true,
+%	emph={@IBAction,UIAlertAction, Settings,  MoreViewController, UIAlertController,  present, KeychainWrapper, addAction, cancel, actionSheet, default, htmlCode, Bundle,sharedInstance,URLRequest,URLSession,guard, dataTask,allow, import, centralManager, prepare},
+%	emphstyle={\color{blue}},
+%	keywordstyle=\color{keyword},
+%	stringstyle=\color{string},
+%	commentstyle=\color{comment},
+%}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{ieeetr} % "apa" per alfabetico
+% List styles
+
+% Page layout (geometry)
+\usepackage[top=3.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+%abstarct enviroment
+
+% Pages lista dei simboli
+\newcommand*{\diff}{\mathop{}\!\mathrm{d}}
+\usepackage[intoc]{nomencl}
+\makenomenclature
+\renewcommand{\nomname}{Lista dei simboli}
+% modifica capitolo o parte
+%\addto\captionsitalian{%
+%	\renewcommand{\chaptername}{}%
+%}
+%\addto\captionsitalian{\renewcommand{\partname}{}}
+%\usepackage[font=normalsize,format=hang]{caption}
+
+
+
+% Pages styles
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\chaptername}{}
+%\renewcommand{\chaptermark}[1]%
+%{\markboth{\MakeUppercase{\chaptername \ 
+%			\thechapter \ - \ #1}}{}}
+\renewcommand{\sectionmark}[1]%
+{\markright{{\thesection.\ #1}}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
+%\newcommand{\helv}{%
+	%\fontfamily{phv}\fontseries{b}\fontsize{9}{11}\selectfont}
+\fancyhf{}
+\fancyfoot[LE,RO]{\large \thepage}
+\fancyhead[LO]{\bfseries \rightmark}
+\fancyhead[LE]{\bfseries \leftmark}
+
+%\fancyhead[RE]{\helv \chaptername}
+
+\fancypagestyle{plain}{%
+	\fancyhead{} % leva l’intestazione
+	\renewcommand{\headrulewidth}{0pt} % e la linea sopra
+	\renewcommand{\footrulewidth}{0pt} % e la linea sotto
+}
+%
+%
+%%
+%% Chapter style styles
+%\let\STARTCODE\relax 
+%\let\STOPCODE\relax 
+%\STARTCODE
+%\usepackage{fourier} % or what ever
+%\usepackage[scaled=.92]{helvet}%. Sans serif - Helvetica
+%\usepackage{color,calc}
+%\newsavebox{\ChpNumBox}
+%\definecolor{ChapBlue}{rgb}{0.00,0.65,0.65}
+%\makeatletter
+%\newcommand*{\thickhrulefill}{%
+%	\leavevmode\leaders\hrule height 1\p@ \hfill \kern \z@}
+%\newcommand*\BuildChpNum[2]{%
+%	\begin{tabular}[t]{@{}c@{}}
+%		\makebox[0pt][c]{#1\strut}  \\[.5ex]
+%		\colorbox{ChapBlue}{%
+%			\rule[-10em]{0pt}{0pt}%
+%			\rule{1ex}{0pt}\color{black}#2\strut
+%			\rule{1ex}{0pt}}%
+%\end{tabular}}
+%\makechapterstyle{BlueBox}{%
+%	\renewcommand{\chapnamefont}{\large\bfseries\scshape}
+%	\renewcommand{\chapnumfont}{\Huge\bfseries}
+%	\renewcommand{\chaptitlefont}{\raggedright\Huge\bfseries}
+%	\setlength{\beforechapskip}{20pt}
+%	\setlength{\midchapskip}{26pt}
+%	\setlength{\afterchapskip}{40pt}
+%	\renewcommand{\printchaptername}{}
+%	\renewcommand{\chapternamenum}{}
+%	\renewcommand{\printchapternum}{%
+%		\sbox{\ChpNumBox}{%
+%			\BuildChpNum{\chapnamefont\@chapapp}%
+%			{\chapnumfont\thechapter}}}
+%	\renewcommand{\printchapternonum}{%
+%		\sbox{\ChpNumBox}{%
+%			\BuildChpNum{\chapnamefont\vphantom{\@chapapp}}%
+%			{\chapnumfont\hphantom{\thechapter}}}}
+%	\renewcommand{\afterchapternum}{}
+%	\renewcommand{\printchaptertitle}[1]{%
+%		\usebox{\ChpNumBox}\hfill
+%		\parbox[t]{\hsize-\wd\ChpNumBox-1em}{%
+%			\vspace{\midchapskip}%
+%			\thickhrulefill\par
+%			\chaptitlefont ##1\par}}%
+%}
+%\chapterstyle{BlueBox}
+%\STOPCODE
+%\setlength\afterchapskip {\onelineskip }
+%\setlength\beforechapskip {\onelineskip }
+%\usepackage{lipsum}
+%
+%%\usepackage{fix-cm}
+%%\usepackage[Sonny]{fncychap}
+%%Options: Sonny, Lenny, Glenn, Conny, Rejne, Bjarne, Bjornstrup
+%
+%%%\newcommand*{\figuretitle}[1]{%
+%%%	{\centering%   <--------  will only affect the title because of the grouping (by the
+%%%		\textbf{#1}%              braces before \centering and behind \medskip). If you remove
+%%%		\par\medskip\bigskip}%            these braces the whole body of a {figure} env will be centered.
+%%%}
+

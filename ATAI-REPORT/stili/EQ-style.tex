@@ -1,0 +1,91 @@
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+\documentclass[openleft]{memoir}
+\usepackage{calc}
+\usepackage{afterpage}
+\copypagestyle{EQ-pagestyle}{companion}
+\setlength{\headwidth}{\textwidth}
+\addtolength{\headwidth}{.382\foremargin}
+\makerunningwidth{EQ-pagestyle}{\headwidth}
+\makeheadposition{EQ-pagestyle}{flushright}{flushleft}{}{}
+\makeevenhead{EQ-pagestyle}{\normalfont\bfseries\thepage}{}{\normalfont\bfseries\leftmark}
+\makeoddhead{EQ-pagestyle}{\normalfont\bfseries\rightmark}{}{\normalfont\bfseries\thepage}
+\newif\ifNoChapNum
+\makeatletter
+% chapterpage layout
+\copypagestyle{EQ-chapterstyle}{EQ-pagestyle}
+\makeheadposition{EQ-chapterstyle}{flushright}{flushleft}{}{}
+\makeevenhead{EQ-chapterstyle}{%
+  \normalfont\bfseries\thepage}{}{%
+  \ifnum \c@secnumdepth>\m@ne%
+    \ifNoChapNum%
+      \raisebox{-4.5pt}[0pt][0pt]{\chapnamefont \rightmark}%
+    \else%
+      \raisebox{-4.5pt}[0pt][0pt]{\chapnamefont\@chapapp\ \thechapter}%
+    \fi%
+  \else%
+    \raisebox{-4.5pt}[0pt][0pt]{\chapnamefont\rightmark}%
+  \fi%
+  }
+\makeoddhead{EQ-chapterstyle}{\rightmark}{}{\normalfont\bfseries\thepage}
+% build in the shorter headline
+\@namedef{EQ-chapterstyleheadrule}{%
+  \ifnum \c@secnumdepth>\m@ne%
+    \ifNoChapNum%
+      \settowidth\@tempdimc{\quad\chapnamefont\rightmark}%
+    \else%
+      \settowidth\@tempdimc{\quad\chapnamefont\@chapapp\ \thechapter}%
+    \fi%
+  \else%
+  \settowidth\@tempdimc{\quad\chapnamefont\rightmark}%
+  \fi%
+  \setlength\@tempdimc{\headwidth-\@tempdimc}%
+  \hrule\@width \@tempdimc\@height \normalrulethickness \vskip-\normalrulethickness%
+}
+\aliaspagestyle{chapter}{EQ-chapterstyle}
+\pagestyle{EQ-pagestyle}
+\makechapterstyle{EQ}{
+  \renewcommand{\chapnamefont}{\raggedleft\bfseries\huge}
+  \renewcommand{\chapternamenum}{}
+  \renewcommand\printchaptername{}
+  \renewcommand\printchapternum{}
+  \renewcommand\printchaptertitle[1]{%
+    \ifnum \c@secnumdepth>\m@ne%
+    \ifNoChapNum\else\chaptitlefont ##1\fi%
+    \fi%
+    \ifNoChapNum%
+    \markboth{##1}{##1}%
+    \fi%
+    \afterpage{\global\NoChapNumfalse}%
+  }
+  \renewcommand\afterchapternum{}
+  \renewcommand\afterchaptertitle{%
+    \ifnum \c@secnumdepth>\m@ne%
+    \ifNoChapNum\else\par\nobreak\vskip\afterchapskip\fi%
+    \fi}
+  \setlength\beforechapskip{15pt}
+  \renewcommand\printchapternonum{\global\NoChapNumtrue}
+  \renewcommand{\chaptitlefont}{\raggedleft\normalfont\Huge\bfseries}
+}
+\makeatother
+\chapterstyle{EQ}
+\begin{document}
+\frontmatter
+\chapter{Preface}
+
+Some text at the beginning of a chapter. And we add a lot of text to
+make sure that it spans more than one line.
+
+\mainmatter
+
+\chapter{A chapter title}
+Some text at the beginning of a chapter. And we add a lot of text to
+make sure that it spans more than one line.
+
+\chapter*{A non-numbered chapter title}
+Some text at the beginning of a chapter. And we add a lot of text to
+make sure that it spans more than one line.
+
+\end{document}
+\STOPCODE

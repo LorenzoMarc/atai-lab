@@ -12,7 +12,7 @@ from maze_analyser import Node, nodes_from_maze
 
 @functools.total_ordering
 class PriorityItem:
-    """Used for inputting non comparable data into a priority queue"""
+    '''Used for inputting non comparable data into a priority queue'''
 
     def __init__(self, priority, item):
         self.priority = priority
@@ -26,9 +26,9 @@ class PriorityItem:
 
 
 def run_dijkstra_algorithm(start_node, nodes) -> None:
-    """Executes Dijkstra's algorithm on an array of nodes, given a starting node.
+    '''Executes Dijkstra's algorithm on an array of nodes, given a starting node.
     All nodes will be updated with a 'distance' value (which signifies the shortest distance from the start node)
-    All nodes will be updated with a 'previous' value (which signifies the previous node in the shortest path)"""
+    All nodes will be updated with a 'previous' value (which signifies the previous node in the shortest path)'''
 
     queue = PriorityQueue()
 

@@ -8,7 +8,7 @@ def generate_maze(width, height):
     maze = Image.new('RGB', (2 * width + 1, 2 * height + 1), 'black')
     pixels = maze.load()
 
-    # Create a path on the very top and bottom so that it has an entrance/exit
+    # Create a path on the very top so that it has an entrance
     pixels[1, 0] = (255, 255, 255)
 
     stack = LifoQueue()
@@ -81,8 +81,6 @@ def main(unused_command_line_args):
            mul = mul + 1
            factor = factor*2 + 1
         maze(i, mul)
-
-    return 0
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

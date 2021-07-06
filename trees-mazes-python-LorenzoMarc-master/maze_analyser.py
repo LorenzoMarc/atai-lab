@@ -29,8 +29,8 @@ def nodes_from_maze(image) -> (Node, Node, List[Node]):
 
     The maze must be made up of black (#000000) and white (#FFFFFF) pixels,
     The start point must be either on the left or top side,
-    The end point must be either on the bottom or right side.
-    Returns the start node, the finish node, and an array of all the nodes.'''
+    The end point must be on the red agent
+    Returns the start node, the finish node (position of the red agent) , and an array of all the nodes.'''
 
     nodes = {}
     start_node = None

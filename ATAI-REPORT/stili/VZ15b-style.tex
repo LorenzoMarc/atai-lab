@@ -1,0 +1,37 @@
+\documentclass{memoir}
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+\usepackage{pifont,graphicx}
+\newcommand\mylleaf{\ding{'247}}
+\newcommand\myrleaf{\reflectbox{\mylleaf}}
+\newcommand\MyNumToName[1]{%
+  \ifcase#1\relax % case 0
+  \or First\or Second\or Third%
+  \else Not implemented\fi}
+\makeatletter
+\setlength\midchapskip{10pt}
+\makechapterstyle{VZ15b}{
+  \renewcommand\chapternamenum{}
+  \renewcommand\printchaptername{}
+  \renewcommand\chapnamefont{\Large\scshape}
+  \renewcommand\printchapternum{%
+    \chapnamefont\null\hfill\mylleaf\quad
+    \MyNumToName{\thechapter}\space\@chapapp\quad\myrleaf\hfill\null}
+  \renewcommand\printchapternonum{%
+    \par\hrule\vskip\midchapskip}
+  \renewcommand\chaptitlefont{\Huge\scshape\centering}
+  \renewcommand\afterchapternum{%
+    \par\nobreak\vskip\midchapskip\hrule\vskip\midchapskip}
+  \renewcommand\afterchaptertitle{%
+    \par\vskip\midchapskip\hrule\nobreak\vskip\afterchapskip}
+}
+\makeatother
+\chapterstyle{VZ15b}
+\STOPCODE
+\setlength\afterchapskip {\onelineskip }
+\setlength\beforechapskip {\onelineskip }
+\usepackage{lipsum}
+\begin{document}
+\input{chapterexample.tex}
+\end{document}

@@ -1,0 +1,24 @@
+\documentclass{memoir}
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+   \makechapterstyle{AlexanderGrebenkov}{%
+  \renewcommand{\chapterheadstart}{\vspace*{\beforechapskip}\hrule\medskip}
+  \renewcommand{\chapnamefont}{\normalfont\large\scshape}
+  \renewcommand{\chapnumfont}{\normalfont\large\scshape}
+  \renewcommand{\chaptitlefont}{\normalfont\large\scshape}
+  \renewcommand{\printchaptername}{\S}
+  \renewcommand{\chapternamenum}{ }
+  \renewcommand{\printchapternum}{\chapnumfont \thechapter}
+  \renewcommand{\afterchapternum}{. }
+  \renewcommand{\afterchaptertitle}{\par\nobreak\medskip\hrule\vskip
+\afterchapskip}
+}
+\chapterstyle{AlexanderGrebenkov}
+\STOPCODE
+\setlength\afterchapskip {\onelineskip }
+\setlength\beforechapskip {\onelineskip }
+\usepackage{lipsum}
+\begin{document}
+\input{chapterexample.tex}
+\end{document}

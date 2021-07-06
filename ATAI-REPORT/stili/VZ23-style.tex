@@ -1,0 +1,24 @@
+\documentclass{memoir}
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+\setlength\midchapskip{10pt}
+\makechapterstyle{VZ23}{
+  \renewcommand\chapternamenum{}
+  \renewcommand\printchaptername{}
+  \renewcommand\chapnumfont{\Huge\bfseries\centering}
+  \renewcommand\chaptitlefont{\Huge\scshape\centering}
+  \renewcommand\afterchapternum{%
+    \par\nobreak\vskip\midchapskip\hrule\vskip\midchapskip}
+  \renewcommand\printchapternonum{%
+    \vphantom{\chapnumfont \thechapter}
+    \par\nobreak\vskip\midchapskip\hrule\vskip\midchapskip}
+}
+\chapterstyle{VZ23}
+\STOPCODE
+\setlength\afterchapskip {\onelineskip }
+\setlength\beforechapskip {\onelineskip }
+\usepackage{lipsum}
+\begin{document}
+\input{chapterexample.tex}
+\end{document}

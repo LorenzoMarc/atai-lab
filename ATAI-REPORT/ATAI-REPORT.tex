@@ -1,0 +1,64 @@
+%\documentclass[a4paper,12pt,openright]{memoir}
+\documentclass[a4paper,12pt,oneside]{book}
+%oneside,openright 
+
+%%%PER LA BOZZA
+%\usepackage[draft]{graphicx}
+%\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{impostazioni-documento}
+
+%\newcommand{\mychapter}[1]{%
+%\setcounter{chapter}{\numexpr(#1-1)}\chapter}
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries\thechapter\space  #1\par\nobreak
+    \vskip 40\p@
+  }}
+\makeatother
+
+\begin{document}
+
+\frontmatter
+\input{Frontespizio/frontespizio}
+\tableofcontents
+\thispagestyle{plain}
+%\listoffigures
+
+\mainmatter
+
+%\addcontentsline{toc}{chapter}{Introduzione}
+
+\input{Chapters/Cap_1}
+\input{Chapters/Cap_2}
+\input{Chapters/Cap_3}
+\input{Chapters/Cap_4}
+\input{Chapters/Conclusions}
+
+
+
+
+%\appendix
+%\part*{Appendice}
+%\addcontentsline{toc}{part}{Appendice}
+
+
+%\chapter{Appendice: Flusso in cavit\`{a} quadrata}
+%\lstinputlisting{programmi/plot100.m}
+
+%%%bibliografia
+%\bibliographystyle{ieetr} % "apa" ieeetr
+%\bibliography{bib} %nome del file.bib
+%\include{references}
+%\input{Capitoli/bib}
+%\addcontentsline{toc}{chapter}{Bibliografia}
+%
+%\nocite{*}%aggiunge quelli non citati
+%
+%\input{Capitoli/Ringraziamenti}
+
+\end{document}

@@ -1,0 +1,67 @@
+\let\STARTCODE\relax 
+\let\STOPCODE\relax 
+\STARTCODE
+\documentclass{memoir}
+\setlrmarginsandblock{6cm}{3cm}{*}
+\checkandfixthelayout
+\usepackage[svgnames]{xcolor}
+\usepackage{tikz}
+% helper macros
+\newcommand{\ChapWithNumber}[1]{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[yshift=-3cm] at (current page.north west)
+    {\begin{tikzpicture}[remember picture, overlay]
+\draw[fill=gray!30!white] (0,-26) rectangle (5,5)
+        (\stockwidth,3cm);
+        \node[anchor=north,xshift=6cm,rectangle,
+rounded corners=20pt,inner sep=11pt,
+fill=gray]
+{\color{white}\chapnamefont\thechapter\space #1};
+      \end{tikzpicture}};
+  \end{tikzpicture}}
+\newcommand{\ChapWithoutNumber}[1]{
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[yshift=-3cm] at (current page.north west)
+    {\begin{tikzpicture}[remember picture, overlay]
+        \draw[fill=gray!30!white] (0,-26) rectangle (5,5)
+        (\stockwidth,3cm);
+        \node[anchor=north,xshift=6cm,rectangle,
+        rounded corners=20pt,inner sep=11pt,
+        fill=gray]{\color{white}\chapnamefont#1};
+      \end{tikzpicture}};
+  \end{tikzpicture}}
+\newif\ifnumberedchap
+\numberedchaptrue
+\makechapterstyle{verly}{
+  \renewcommand\chapnamefont{\normalfont\sffamily\Huge\bfseries}
+  \renewcommand\chapnumfont{\normalfont\sffamily\Huge\bfseries}
+  \renewcommand\chaptitlefont{\normalfont\sffamily\Huge\bfseries}
+  \renewcommand\chapternamenum{}
+  \renewcommand{\afterchapternum}{}
+  \renewcommand\printchaptername{}
+  \renewcommand\printchapternum{}
+  \renewcommand\printchapternonum{\global\numberedchapfalse}
+  \renewcommand\printchaptertitle[1]{%
+    \ifnumberedchap\ChapWithNumber{##1}\else\ChapWithoutNumber{##1}\fi
+    \global\numberedchaptrue
+  }
+}
+\chapterstyle{verly}
+\aliaspagestyle{chapter}{empty} % just to save some space
+\begin{document}
+\chapter{A chapter title}
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut purus
+elit, vestibulum ut, placerat ac, adipiscing vitae, felis. Curabitur
+dictum gravida mauris. Nam arcu libero, nonummy eget, consectetuer id,
+vulputate a, magna.
+
+
+\chapter*{A non-numbered chapter title}
+Nam dui ligula, fringilla a, euismod sodales, sollicitudin vel,
+wisi. Morbi auctor lorem non justo. Nam lacus libero, pretium at,
+lobortis vitae, ultricies et, tellus. Donec aliquet, tortor sed
+accumsan bibendum, erat ligula aliquet magna, vitae ornare odio metus
+a mi.
+
+\end{document}
+\STOPCODE
