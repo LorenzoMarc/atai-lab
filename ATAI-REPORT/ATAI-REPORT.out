@@ -1,16 +1,20 @@
 \BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
 \BOOKMARK [1][-]{section.1.1}{Problem description}{chapter.1}% 2
-\BOOKMARK [1][-]{section.1.2}{Tasks}{chapter.1}% 3
-\BOOKMARK [0][-]{chapter.2}{Parte di Ruggero}{}% 4
-\BOOKMARK [1][-]{section.2.1}{Background}{chapter.2}% 5
-\BOOKMARK [1][-]{section.2.2}{Implementation}{chapter.2}% 6
-\BOOKMARK [1][-]{section.2.3}{Experiments}{chapter.2}% 7
-\BOOKMARK [0][-]{chapter.3}{Parte di Lorenzo}{}% 8
-\BOOKMARK [1][-]{section.3.1}{Background}{chapter.3}% 9
-\BOOKMARK [1][-]{section.3.2}{Implementation}{chapter.3}% 10
-\BOOKMARK [1][-]{section.3.3}{Experiments}{chapter.3}% 11
-\BOOKMARK [0][-]{chapter.4}{Parte di Francesca}{}% 12
-\BOOKMARK [1][-]{section.4.1}{Background}{chapter.4}% 13
-\BOOKMARK [1][-]{section.4.2}{Implementation}{chapter.4}% 14
-\BOOKMARK [1][-]{section.4.3}{Experiments}{chapter.4}% 15
-\BOOKMARK [0][-]{chapter*.3}{Conclusions}{}% 16
+\BOOKMARK [1][-]{section.1.2}{Approaches}{chapter.1}% 3
+\BOOKMARK [2][-]{subsection.1.2.1}{Q-Learning maze resolution }{section.1.2}% 4
+\BOOKMARK [2][-]{subsection.1.2.2}{Deep Q-Network training maze resolution}{section.1.2}% 5
+\BOOKMARK [2][-]{subsection.1.2.3}{Top-down maze resolution }{section.1.2}% 6
+\BOOKMARK [0][-]{chapter.2}{Parte di Ruggero}{}% 7
+\BOOKMARK [1][-]{section.2.1}{Background}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.2}{Implementation}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.3}{Experiments}{chapter.2}% 10
+\BOOKMARK [0][-]{chapter.3}{Parte di Lorenzo}{}% 11
+\BOOKMARK [1][-]{section.3.1}{Background}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.2}{Implementation}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.3}{Experiments}{chapter.3}% 14
+\BOOKMARK [0][-]{chapter.4}{Top-down maze resolution approach}{}% 15
+\BOOKMARK [1][-]{section.4.1}{Background}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.2}{Implementation}{chapter.4}% 17
+\BOOKMARK [2][-]{subsection.4.2.1}{Output}{section.4.2}% 18
+\BOOKMARK [1][-]{section.4.3}{Experiments}{chapter.4}% 19
+\BOOKMARK [0][-]{chapter*.7}{Conclusions}{}% 20

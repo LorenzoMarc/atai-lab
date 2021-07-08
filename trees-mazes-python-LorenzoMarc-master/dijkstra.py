@@ -1,10 +1,10 @@
 import functools
-from pathlib import Path
+#from pathlib import Path
 from queue import PriorityQueue
 from typing import List
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image
 import time
 import os
 from maze_analyser import Node, nodes_from_maze
@@ -38,7 +38,6 @@ def run_dijkstra_algorithm(start_node, nodes) -> None:
     shortest_path = [start_node]
 
     queue.put(PriorityItem(0, start_node))
-
     while not queue.empty():
 
         current_node = queue.get().item
@@ -93,7 +92,6 @@ def solve_image(file_path) -> None:
     '''Solves a maze image file and outputs the solution in the Results folder.'''
     image = Image.open(file_path)
     start_node, finish_node, nodes = nodes_from_maze(image)
-
     run_dijkstra_algorithm(start_node, nodes)
     if finish_node:
         path = get_path_from_node(finish_node)
