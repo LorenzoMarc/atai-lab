@@ -2,30 +2,17 @@ from gym import Env
 from gym.spaces import Discrete, Box
 import numpy as np
 import random
+import time
+
 
 import matplotlib
 
 max_grid_length = 4
 starting_grid_pos = 0
-episode_length = 500
 
-episodes = 100
 #global success_number
 global success_number
 success_number = 0
-
-
-#La Q_table resta la stessa per diversi episodi
-Q_table = np.zeros(shape=(25, 4), dtype=float)
-
-# Learning rate: how much you accept the new value vs the old value.
-lr = 0.8
-
-# Gamma: discount factor
-gamma = 0.9
-# Env inherited from Open AI Gym
-
-
 
 
 class Grid(Env):
@@ -121,7 +108,7 @@ class Grid(Env):
 
         # Calculate reward
         if self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
-            reward = 10000
+            reward = +10000
             print("TARGET STATE RAGGIUNTO, termine episodio")
 
         elif new_target_distance < old_target_distance:
@@ -143,8 +130,8 @@ class Grid(Env):
 
         # Set placeholder for info
         info = {}
-        print("self.state: ", self.state, " target_state: ", self.target_state, " new distance: ", new_target_distance,
-              " old distance: ", old_target_distance)
+        target_distance = new_target_distance - old_target_distance
+        print("self.state: ", self.state, " distance from the target state: ", target_distance)
         # Return step information
         return self.state, reward, done, info
 
@@ -176,10 +163,19 @@ env = Grid()
 
 
 # Aggiornamento dei Q-values nella matrice Q_table
-def update_qtable(state, action, reward, new_state):
+def update_qtable(state, action, reward, new_state, learning_rate, gamma):
+
     # Cumulative reward
-    # DA RIVEDERE VALORE DI LR (aka learning rate)
-    Q_table[state, action] += lr * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state, action])
+    Q_table[state, action] += learning_rate * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state, action])
+
+    print ("Q_TABLE INPUTS: \n state: ",state, " action: ",  action, " reward: ", reward, " new state: ", new_state,
+           " learning rate: ", learning_rate, " gamma: ", gamma )
+
+    row_numb=0
+    print("#### Q TABLE #### \n")
+    for x in Q_table:
+        print("row ", row_numb, " ",  x)
+        row_numb += 1
 
     return Q_table
 
@@ -193,107 +189,175 @@ def mapping_state(next_state):
     return new_pos
 
 
-for episode in range(episodes):
-    print("######### NEW EPISODE ################")
-    state = env.reset()
-    done = False
-    score = 0
-    env.action_space = np.array([0, 1, 2, 3])
+def run(learning_rate, gamma,  episodes, episodes_length, run_number, Q_table):
+    global state, success_number
 
 
-    while not done:
-        env.render()
 
-        epsilon = 1 / env.path_length
-        not_epislon = 1 - (1 / env.path_length)
-        print ("stato iniziale: ", state)
-        if random.uniform(0, 1) < epsilon:
-            """ Explore: select a random action   """
-            # Choose action
-            action = random.choice(env.action_space)
-            #next state ritornato dall'oracolo è già mappato
-            do_action = env.oracle(state, action)
-            yes = do_action
-            state2 = mapping_state(state)
-            #mapped_state = mapping_state(next_state)
-            mapped_state = mapping_state(state)
-            if yes: #L'azione resta nei boundaries, la eseguo
-                print("Exploration action: ", action)
-                # Perform action
-                next_state, reward, done, info = env.step(action)
+    for episode in range(episodes):
+        print("######### NEW EPISODE ################")
+        print ("Q_table new episode: \n", Q_table)
+        state = env.reset()
+        done = False
+        score = 0
 
-                # Aggiorna la Q_table
-                #update_qtable(state2, action, reward, mapped_state)
-                update_qtable(state2, action, reward, next_state)
-                print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
-                print ("q-table:\n", Q_table)
-                if (reward == 10000):
-                    success_number +=1
+        # Action available
+        env.action_space = np.array([0, 1, 2, 3])
 
-                score += reward
-            else:  #ESCO DAI BOUNDARIES
-                # Aggiorna la Q_table
-                reward = -100
-                #update_qtable(state2, action, reward, mapped_state)
-                update_qtable(state2, action, reward, state2) # passo come next_state lo stato corrente -> NON è CORRETTO
-                score += reward
-                print ("Con l'azione ", action, " nello stato ", state2,
-                       " vado fuori dai limiti del mondo")
-                env.success = False
-                done = True
-            '''
-            do_action = False
-            while not do_action:
+        start = time.time()
+        while not done:
+            env.render()
+
+            epsilon = 1 / env.path_length
+            not_epislon = 1 - (1 / env.path_length)
+            print("stato iniziale: ", state)
+            if random.uniform(0, 1) < epsilon:
+                """ Explore: select a random action   """
+                # Choose action
                 action = random.choice(env.action_space)
+                print("Exploration action: ", action)
+                # next state ritornato dall'oracolo è già mappato
                 do_action = env.oracle(state, action)
+                yes = do_action
+                state2 = mapping_state(state)
+                # mapped_state = mapping_state(next_state)
+                mapped_state = mapping_state(state)
+                if yes:  # L'azione resta nei boundaries, la eseguo
 
-            '''
+                    # Perform action
+                    next_state, reward, done, info = env.step(action)
 
-        else:
-            """ Exploit: select the action with max value (future reward)  """
-            state2 = mapping_state(state)
-            action_qvalues = Q_table[state2].tolist()
-            max_action_value = max(action_qvalues)
-            #Choose action
-            action = action_qvalues.index(max_action_value)
-            # next state ritornato dall'oracolo è già mappato
-            do_action = env.oracle(state, action)
-            #mapped_state = mapping_state(next_state)
-            mapped_state = mapping_state(state)
-            yes= do_action
-            if yes: #L'azione resta nei boundaries, la eseguo
+                    # Aggiorna la Q_table
+                    # update_qtable(state2, action, reward, mapped_state)
+                    update_qtable(state2, action, reward, next_state, learning_rate, gamma)
+                    print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
+                    #print("q-table:\n", Q_table)
+                    if (reward == 10000):
+                        success_number += 1
+
+                    score += reward
+                else:  # ESCO DAI BOUNDARIES
+                    # Aggiorna la Q_table
+                    reward = -100
+                    # update_qtable(state2, action, reward, mapped_state)
+                    update_qtable(state2, action, reward,
+                                  state2, learning_rate, gamma)  # passo come next_state lo stato corrente -> NON è CORRETTO
+                    score += reward
+                    print("Con l'azione ", action, " nello stato ", state2,
+                          " vado fuori dai limiti del mondo")
+                    env.success = False
+                    done = True
+                '''
+                do_action = False
+                while not do_action:
+                    action = random.choice(env.action_space)
+                    do_action = env.oracle(state, action)
+    
+                '''
+
+            else:
+                """ Exploit: select the action with max value (future reward)  """
+                state2 = mapping_state(state)
+                action_qvalues = Q_table[state2].tolist()
+                max_action_value = max(action_qvalues)
+                # Choose action
+                actions = [i for i, x in enumerate(action_qvalues) if x == max_action_value]
+                print("Actions available: ", actions)
+                action = random.choice(actions)
                 print("Exploit action: ", action)
-                # Perform action
+                # action = action_qvalues.index(max_action_value)
+                # next state ritornato dall'oracolo è già mappato
+                do_action = env.oracle(state, action)
+                # mapped_state = mapping_state(next_state)
+                mapped_state = mapping_state(state)
+                yes = do_action
+                if yes:  # L'azione resta nei boundaries, la eseguo
+
+                    # Perform action
+                    next_state, reward, done, info = env.step(action)
+                    # Aggiorna la Q_table
+                    # update_qtable(state2, action, reward, mapped_state)
+                    update_qtable(state2, action, reward, next_state, learning_rate, gamma)
+                    print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
+                    #print("q-table:\n", Q_table)
+                    if (reward == 10000):
+                        success_number += 1
+                    score += reward
+                else:  # ESCO DAI BOUNDARIES
+                    reward = -100
+                    # Aggiorna la Q_table
+                    # update_qtable(state2, action, reward, mapped_state)
+                    update_qtable(state2, action, reward,
+                                  state2, learning_rate, gamma)  # Invece di next_state gli passo lo stato attuale -> NON CORRETTO
+                    score += reward
+                    print("Con l'azione ", action, " nello stato ", state2,
+                          " vado fuori dai limiti del mondo")
+                    env.success = False
+                    done = True
+                '''
+                print ("Exploit action: ", action)
+                #Perform action
                 next_state, reward, done, info = env.step(action)
+                mapped_state = mapping_state(next_state)
                 # Aggiorna la Q_table
-                #update_qtable(state2, action, reward, mapped_state)
-                update_qtable(state2, action, reward, state2)
-                print("Stato: ", state2, " azione: ", action, " next state: ", next_state, " reward: ", reward)
-                print("q-table:\n", Q_table)
-                if (reward == 10000):
-                    success_number +=1
+                update_qtable(state2, action, reward, mapped_state)
                 score += reward
-            else: #ESCO DAI BOUNDARIES
-                reward = -100
-                # Aggiorna la Q_table
-                #update_qtable(state2, action, reward, mapped_state)
-                update_qtable(state2, action, reward, state2) # Invece di next_state gli passo lo stato attuale -> NON CORRETTO
-                score += reward
-                print ("Con l'azione ", action, " nello stato ", state2,
-                       " vado fuori dai limiti del mondo")
-                env.success = False
-                done = True
-            '''
-            print ("Exploit action: ", action)
-            #Perform action
-            next_state, reward, done, info = env.step(action)
-            mapped_state = mapping_state(next_state)
-            # Aggiorna la Q_table
-            update_qtable(state2, action, reward, mapped_state)
-            score += reward
-            '''
+                '''
+        print("Episode score: ", score)
+        end = time.time()
+        # print('Run:{}, Episode:{}, Score:{} Steps:{}, Success:{}, ExecutionTime:{}, LearningRate:{}, Gamma:{}'.format(run_number,
+        #                                                                                                     episode, score,
+        #                                                                                                     env.path_length,
+        #                                                                                                     env.success,
+        #                                                                                                     end - start,
+        #                                                                                                     learning_rate,
+        #                                                                                                     gamma))
 
-    print('EPISODE:{} SCORE:{} STEP:{}, SUCCESS:{} \nFINAL Q_table:{}'.format(episode, score, env.path_length, env.success, Q_table))
 
-success_rate = success_number / episodes
-print("Fine programma, success_rate: ", success_rate * 100, "%", "su ", episodes, " episodi")
+        output = [run_number, episode, score, env.path_length, env.success, end - start, learning_rate, gamma]
+
+        success_rate = success_number / 100
+        #print ("FINAL Q TABLE OF THE EPSISODE: \n", Q_table)
+        # print("Fine programma, success_rate: ", success_rate * 100, "%", "su ", episodes, " episodi",
+        #        "; hanno avuto successo ", success_number, " episodi.")
+        print ("End episode")
+
+        for element in output:
+            f.write(str(element))
+            f.write(",")
+
+        f.write('\n')
+
+    print("End run")
+
+
+
+if __name__ == "__main__":
+    episode_length = 100
+    episodes = 50
+
+    # Learning rate: how much you accept the new value vs the old value.
+    learning_rate = 0.8
+    # Gamma: discount factor
+    gamma = 0.9
+
+    learning_rate = [0.1, 0.3, 0.5, 0.7, 0.9]
+    gamma = [0.1, 0.3, 0.5, 0.7, 0.9]
+
+    with open('prova 5 runs.csv', 'w') as f:
+        f.write("Run,Episode,Score,Steps,Success,ExecutionTime,LearningRate,Gamma\n")
+
+
+        run_number = 0
+        # Env inherited from Open AI Gym
+        #Ciclo for per far girare i vari esperimenti
+        for x in learning_rate:
+            for y in gamma:
+                print("\n\n #######NUOVA RUN###############")
+                #f.write('\n\nNUOVO CICLO\n')
+                # La Q_table resta la stessa per diversi episodi
+                Q_table = np.zeros(shape=(25, 4), dtype=float)
+                run(x, y,  episodes, episode_length, run_number, Q_table)
+                run_number += 1
+
+    f.close()
