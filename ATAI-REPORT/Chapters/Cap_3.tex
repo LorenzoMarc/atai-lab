@@ -1,5 +1,4 @@
-\chapter{Deep Q-Network training maze resolution}
-
+\section{Deep Q-Network training maze resolution}
 \subsection{Background}
 The task was developed in python using available libraries for reinforcement learning such as Keras and Gym.
 \begin{itemize}
@@ -18,7 +17,7 @@ In the first one are defined:
 \begin{itemize}
     \item \textbf{Grid class: }Our custom environment, defined with gym interface for environments, which required to override specific methods: 
     \begin{itemize}
-        \item \textit{init: }The class initializer requires the subset of \textit{walls states}, maximum dimension of the grid and the available steps for the agent (\textit{path\_length}. 
+        \item \textit{init: }The class initializer requires the subset of \textit{walls states}, maximum dimension of the grid and the available steps for the agent (\textit{path\_length}). 
         The initializer defines attributes of the maze: action space, observation space, actual state, path lenth, target state and the walls susbset.
         \item \textit{step: }This function set the movement and the reward of the agent. It returns the state, reward, done (a boolean that check the status of the episode) and a log variable called info.
         \item \textit{render: }Visualization of the problem, not implemented for this task.
@@ -59,16 +58,12 @@ In the picture below are reported some results of the network training in 130 ep
     \caption{Time to resolution per epoch}
     \label{fig:my_label}
 \end{figure}
-
-The expected time distribution of the ending time per epochs is similar to a 
-long tail distribution on long training session, meanwhile with less training 
-time it has a low frequency of short ending time and a high frequency of maximum
-ending time (limited number of steps). The next figure represent a trained network 
-with 130 epochs and the distribution in frequency of their time per episode.
-
+The expected mean time distribution per episode is a monotonic descendent function. 
 \begin{figure}[h]
     \centering
-    \includegraphics{img/histTimeEps.png}
+    \includegraphics[width=\linewidth]{img/histTimeEps.png}
     \caption{Time distribution of the epochs}
     \label{fig:my_label}
 \end{figure}
+We are expecting an inversion of the following histogram, where the frequencies with high frequencies on short computational time and less number of longer runs will be exchange. 
+
