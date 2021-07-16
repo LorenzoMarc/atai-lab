@@ -72,9 +72,9 @@ def maze(iteration_number, multiplicative_factor):
 import sys
 
 def main(unused_command_line_args):
-    nr_ex = 3
-    size = 10
-    mul = 1
+    nr_ex = 3  # divide mazes into 3 partes
+    size = 10 # number mazes
+    mul = 1  #multiplicative factor
     factor = size/nr_ex
     for i in range(size):
         if i > factor:

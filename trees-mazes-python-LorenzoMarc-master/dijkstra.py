@@ -62,7 +62,7 @@ def get_path_from_node(node: Node) -> List[Node]:
 
 
 def colour_path(image, path) -> None:
-    start_node = path[-1]
+    #start_node = path[-1]
     finish_node = path[0]
 
     pixels = image.load()
