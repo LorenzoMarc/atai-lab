@@ -43,4 +43,17 @@ The actual learning is done with some \textit{'runs'}. Each run consists of 500 
 
 An example of Q-table output is shown in \ref{fig:q-}.
 
-\section{Experiments}
+\section{Testing Phase}
+From the \textit{Learning phase} of the agent we have obtained a \textit{Q-table} for each pair of \textit{Learning Rate} and \textit{Gamma} values which are fed into the \textit{Testing phase}.
+In the \textit{Testing phase} the agent always executes the action with the highest q-value (no exploration), thus obtaining a deterministic behavior. This allows us to run a single test for each Q-table.
+
+The testing phase aims to find out what are the optimal values of \textit{learning rate} and \textit{gamma}. The strategy we used to determine which parameter to use to evaluate the $<lr, gamma>$ pair is as follows: if the agent reaches the target state, then the number of \textit{steps} it took to reach it is taken as a parameter, the total \textit{score} otherwise.
+
+
+\section{Conclusion}
+The goal of this task was to teach an agent how to get out of a space (very simple, without obstacles). To do this, it was decided to use the \textit{reinforcment learning} method together with the \textit{GLIE} technique.
+This last technique is in my opinion "improvable", that is, it can be implemented in different ways to obtain a better result. 
+The problem with standard implementation is that only after a few steps does the probability of exploration drop significantly (after only 10 steps we have a 10\% chance of making an exploration move) and therefore we have a long-tail distribution. 
+An improvement would be to divide the episodes of the training phase into two parts: in the first part we use $1 - epsilon$ (so at the beginning of the episodes there will be a high probability of making exploratory moves) while in the second part of the episodes we only use $epsilon$. In this way there will be the possibility to make exploratory moves even towards the end of the episode.
+
+Another interesting approach  could be to make a smoothing in order to linearize the probability distribution.
