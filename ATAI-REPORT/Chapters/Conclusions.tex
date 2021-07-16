@@ -5,7 +5,14 @@
 \fancyhead[LO]{\bfseries Conclusions}
 \fancyhead[LE]{\bfseries Conclusions }
 
-\section{Maze Resolution with Q learning}
-The Q Learning results are reported in the following plots. 
-The idea is to do some confrontation between grids of different dimensions.
+\section{Three different approaches for a maze resolution}
+
+These three approaches cover some current methodologies such as \textit{deep q-learning} and \textit{Dijkstra} and methods seen in class such as the simple \textit{q-learning} algorithm. Overall, the application of q-learning approach seemed suitable for this type of problem.
+
+The biggest differences between the 3 different approaches we found were in the training phase: in the dijkstra approach the step is not necessary, being a deterministic algorithm. In the other 2 cases the q-tables proved to be quite effective. Più specificamente nel caso del \textit{simple q-learning} sono bastati 50-70 episodi (di lunghezza 200 passi l'uno) per avere una q-table che conducesse l'agente al \textit{Target State}.
+On the other hand, in the case of neural \textit{networks}, training takes much longer because the number of parameters to be trained is high. Furthermore, the results obtained from the training phase were not as excellent as initially thought. On a positive note, this approach scales well: as the size of the grid increases, it has proved more efficient than the population done in the case of \textit{simple q-learning}.
+
+Since \textit{neural networks} need to be formalized (find optimal values), trained and tested, this appears to be a much greater effort than the \textit{simple q-learning} approach. Effort not justified by the results that were not satisfactory compared to expectations. In this sense it seems convenient to use the \textit{simple q-learning} approach.
+
+
 %\newpage\null\thispagestyle{empty}\newpage 
