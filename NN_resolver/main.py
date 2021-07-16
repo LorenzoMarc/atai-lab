@@ -182,7 +182,7 @@ plt.plot(time_callback.times)
 plt.xlabel('Number of Episodes')
 plt.ylabel('Computation time per episode (sec)')
 
-# plotting a line plot after changing it's width and height
+# plotting a line plot after changing its width and height
 f = plt.figure()
 f.set_figwidth(16)
 f.set_figheight(9)
@@ -201,7 +201,7 @@ plt.plot(time_callback.times)
 plt.xlabel('Number of Episodes')
 plt.ylabel('Computation time per episode (sec)')
 
-# plotting a line plot after changing it's width and height
+# plotting a line plot after changing its width and height
 f = plt.figure()
 f.set_figwidth(16)
 f.set_figheight(9)

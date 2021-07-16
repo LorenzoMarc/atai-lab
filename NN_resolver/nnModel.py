@@ -24,7 +24,6 @@ def build_model(states, actions):
 # return a trained agent with Q function
 def build_agent(model, actions):
     policy = BoltzmannQPolicy()
-    # policy = LinearAnnealedPolicy(EpsGreedyQPolicy(), attr='eps', value_max=1., value_min=.1, value_test=.2, nb_steps=1000)
     memory = SequentialMemory(limit=5000, window_length=1)
     dqn = DQNAgent(model=model, memory=memory, policy=policy, nb_actions=actions, nb_steps_warmup=100,
                    target_model_update=1e-2)
