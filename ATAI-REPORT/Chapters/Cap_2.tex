@@ -49,6 +49,15 @@ In the \textit{Testing phase} the agent always executes the action with the high
 
 The testing phase aims to find out what are the optimal values of \textit{learning rate} and \textit{gamma}. The strategy we used to determine which parameter to use to evaluate the $<lr, gamma>$ pair is as follows: if the agent reaches the target state, then the number of \textit{steps} it took to reach it is taken as a parameter, the total \textit{score} otherwise.
 
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.9]{imgs/QLearnScores.png}
+	\caption{The average score of the episodes decrease as the learning rate value increases.}
+	\label{fig:LearnScores}
+\end{figure}
+
+One thing we have noticed is that, as the learning rate increased, the generated Q-tables were unable to bring the agent to the target state. High values of \textit{Learning Rate} make the update function for the Q-values too much sensitive to the variations. In figure \ref{LearnScores} it is possible to see the trend of the score values as the learning rate values vary. From this plot we can establish, empirically, that the best values for the \textit{Learning Rate} lie between 0 and 0.5.
+
 
 \section{Conclusion}
 The goal of this task was to teach an agent how to get out of a space (very simple, without obstacles). To do this, it was decided to use the \textit{reinforcment learning} method together with the \textit{GLIE} technique.
@@ -56,4 +65,4 @@ This last technique is in my opinion "improvable", that is, it can be implemente
 The problem with standard implementation is that only after a few steps does the probability of exploration drop significantly (after only 10 steps we have a 10\% chance of making an exploration move) and therefore we have a long-tail distribution. 
 An improvement would be to divide the episodes of the training phase into two parts: in the first part we use $1 - epsilon$ (so at the beginning of the episodes there will be a high probability of making exploratory moves) while in the second part of the episodes we only use $epsilon$. In this way there will be the possibility to make exploratory moves even towards the end of the episode.
 
-Another interesting approach  could be to make a smoothing in order to linearize the probability distribution.
+Another interesting approach could be to make a smoothing in order to linearize the probability distribution.
