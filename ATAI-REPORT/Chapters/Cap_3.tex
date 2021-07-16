@@ -1,5 +1,5 @@
-\section{Deep Q-Network training maze resolution}
-\subsection{Background}
+\chapter{Deep Q-Network training maze resolution}
+\section{Background}
 The task was developed in python using available libraries for reinforcement learning such as Keras and Gym.
 \begin{itemize}
     \item \textbf{Keras: }An open source library that provides an interface for artificial intelligence and neural networks tasks. It is based on the interface of TensorFlow library.
@@ -11,7 +11,7 @@ The Q-Network proceeds as a non linear approximation which maps states in an act
 
 The final goal is to approximate the non linear function \textit{Q(S,A)} with the deep learning of a multi layers neural network. The DQN, like for the supervised neural network, has loss function to predict the next state (assuming state s, action a and reward r).
 
-\subsection{Implementation}
+\section{Implementation}
 The source code is divided in two files \textit{main.py} and \textit{nnModel.py}.
 In the first one are defined:
 \begin{itemize}
@@ -54,7 +54,7 @@ In the picture below are reported some results of the network training in 130 ep
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\linewidth]{img/episVStime.png}
+   \includegraphics[width=\linewidth]{img/epochVStime}
     \caption{Time to resolution per epoch}
     \label{fig:my_label}
 \end{figure}

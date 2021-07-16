@@ -8,7 +8,7 @@
 \BOOKMARK [1][-]{section.2.1}{Background}{chapter.2}% 8
 \BOOKMARK [1][-]{section.2.2}{Implementation}{chapter.2}% 9
 \BOOKMARK [1][-]{section.2.3}{Experiments}{chapter.2}% 10
-\BOOKMARK [0][-]{chapter.3}{Parte di Lorenzo}{}% 11
+\BOOKMARK [0][-]{chapter.3}{Deep Q-Network training maze resolution}{}% 11
 \BOOKMARK [1][-]{section.3.1}{Background}{chapter.3}% 12
 \BOOKMARK [1][-]{section.3.2}{Implementation}{chapter.3}% 13
 \BOOKMARK [1][-]{section.3.3}{Experiments}{chapter.3}% 14
@@ -17,4 +17,5 @@
 \BOOKMARK [1][-]{section.4.2}{Implementation}{chapter.4}% 17
 \BOOKMARK [2][-]{subsection.4.2.1}{Output}{section.4.2}% 18
 \BOOKMARK [1][-]{section.4.3}{Experiments}{chapter.4}% 19
-\BOOKMARK [0][-]{chapter*.7}{Conclusions}{}% 20
+\BOOKMARK [0][-]{chapter*.9}{Conclusions}{}% 20
+\BOOKMARK [1][-]{section.4.4}{Maze Resolution with Q learning}{chapter*.9}% 21
