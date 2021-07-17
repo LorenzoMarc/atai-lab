@@ -9,8 +9,7 @@ To solve this problem we used 3 different approaches.
 
 \section{Approaches}
 
-We began to solve the problem with what was the optimal solution for us, that is the approach that uses \textbf{Q-Learning}. We talked about it a lot in class.
- But then we thought it was very interesting to solve it even with different approaches and then make a comparison with the Q-Learning approach. So we also worked on two different resolution methods such as: Deep Q Network training and the top-down maze resolution approach (using the Djikstra algorithm).
+We began to solve the problem with what was the optimal solution for us, that is the approach explained during the lectures that is \textbf{Q-Learning}. We thought it was very interesting to solve it even with different approaches and then make a comparison with the Q-Learning approach. So, we also worked on two different resolution methods such as: Deep Q Network training and the top-down maze resolution approach (using the Djikstra algorithm).
 \\
 The work was divided as follows:
 \begin{itemize}
@@ -24,15 +23,18 @@ The work was divided as follows:
 
 
 \subsection{Q-Learning maze resolution }
-In this approach we used the q-reinforcment learning where the agent is in a certain state and must decide what action to do based on the q-values that determine the actions available in that state. 
+In this approach we used the q-reinforcement learning where the agent is in a certain state and must decide what action to do based on the q-values that determine the actions available in that state. 
 The q-values are calculated at each step with the formula seen in class. 
 to balance exploration and exploitation, instead of having a fixed epsilon, we used the \textbf{GLIE} technique
-As for the environment we used a \textit{5 x 5} grid where the agent starts from the coordinates (0,0) and must arrive at the coordinates (4,4)
-then follows data analysis, changing parameters such as learning rate and gamma to find out what is the optimal combination (understood as execution times and / or success rate) of these 2 parameters.
+As for the environment we used a \textit{5 x 5} grid, where the agent starts from the coordinates (0,0) and must arrive at the coordinates (4,4) and for testing we changed parameters, such as learning rate and gamma, to find out what is the optimal combination (understood as execution times and / or success rate) of these 2 parameters.
 
 \subsection{Deep Q-Network training maze resolution}
-the approach was carried out with the deep Q-Learning network and developed in Python using existing libraries developed for reinforcement learning such as keras.
-The deep learning network uses the concepts of Q-Learning when the space of states is too large. This avoids using tables. We don't want to use tables because they would be too heavy to handle in memory if the space is that big. On the other hand it requires a large amount of epochs to be able to calculate the Q-Values within these tables and therefore will require very long runs. The neural networks are exploited within this situation (ie a very large table) to have an approximation to the Bellman equation which is used for the resolution of the Q-Values. Since we have a very large space, we obtain a very complex equation and therefore neural networks are right for us. Using the functions already implemented, for example in keras, you can define the agents with their policies already implemented and the actions that are then carried out by them based on the table found by the network and so you can go to select those that are the converging values and to solve the problem
+The approach was carried out with the deep Q-Learning network and developed in Python using existing libraries developed for reinforcement learning such as keras.
+The deep learning network uses the concepts of Q-Learning when the space of states is too large. This avoids using large tables for the q-values. We don't want to 
+use tables because they would be too heavy to handle in memory if the space is that big. On the other hand it requires a large amount of epochs to be able to calculate 
+the Q-Values within these tables and therefore will require very long runs. The neural networks are exploited within this situation (ie a very large table) to have an 
+approximation to the Bellman equation. Since we have a very large space, we obtain a very complex equation and therefore 
+neural networks are right for us. Using the functions already implemented, for example in keras, we can define the agents with policies already implemented.
 
 \subsection{Top-down maze resolution }
 First we created the environment. We therefore built 10 mazes randomly and fixed the two agents. This code was then transformed into a png so you can see the results graphically.
