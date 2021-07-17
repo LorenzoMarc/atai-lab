@@ -8,6 +8,7 @@ The task was developed in python using available libraries for reinforcement lea
 
 Deep Q Learning is suitable for this task because it is a typically problem framed as Markov Decision Process (a set of states S and actions A). The transitions are performed with probability P and reward R for a discounted gamma. 
 The Q-Network proceeds as a non linear approximation which maps states in an action value. During the training, the agent interacts (fits) with the environment and the data received during the learning of the network.
+The original article that start DQN can be found here https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf.
 
 The final goal is to approximate the non linear function \textit{Q(S,A)} with the deep learning of a multi layers neural network. The DQN, like for the supervised neural network, has loss function to predict the next state (assuming state s, action a and reward r).
 
