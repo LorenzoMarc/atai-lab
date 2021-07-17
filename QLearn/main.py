@@ -3,20 +3,21 @@ from gym.spaces import Discrete, Box
 import numpy as np
 import random
 
-import matplotlib
 
 max_grid_length = 4
 starting_grid_pos = 0
-episode_length = 500
+
+global success_number
+success_number = 0
 
 
-# Env inherited from Open AI Gym
 class Grid(Env):
 
     def __init__(self):
 
         # Actions: up, down, left, right
         self.action_space = Discrete(4)
+
         # grid cells
         self.observation_space = Box(low=np.array([starting_grid_pos, starting_grid_pos]),
                                      high=np.array([max_grid_length, max_grid_length]), dtype=int)
@@ -33,92 +34,77 @@ class Grid(Env):
 
         self.target_state = np.array([max_grid_length, max_grid_length])
 
+    def oracle(self, actual_state, action):
+
+        if action == 0 and state[1] < max_grid_length:  # GO UP
+            # actual_state[1] += 1
+            return True
+
+        elif action == 1 and state[1] > starting_grid_pos:  # GO DOWN
+            # actual_state[1] -= 1
+            return True
+
+        elif action == 2 and state[0] > starting_grid_pos:  # GO LEFT
+            # actual_state[0] -= 1
+            return True
+
+        elif action == 3 and state[0] < max_grid_length:  # GO RIGHT
+            # actual_state[0] += 1
+            return True
+
+        else:
+            #NON VALID ACTION
+            return False
+
+
     def step(self, action):
         # action| path_length | state
         # 0     |  +1         | (_, +1)
         # 1     |  +1         | (_, -1)
         # 2     |  +1         | (-1, _)
         # 3     |  +1         | (+1, _)
-        # self.state è nella forma [x,y]
 
-        # Calcolo distanza euclidea del "vecchio stato":
+        # Euclidean distance calculation of the "old state":
         old_target_distance = np.linalg.norm(self.state - self.target_state)
 
         if action == 0:  # GO UP
             self.state[1] += 1
-            if (state[1] <= max_grid_length):
-                # Il movimento resta all'interno della griglia
-                pass
-            else:  # Il movimento esce dai limiti della griglia:
-                #print("mossa in alto non valida!")
-                # Ritorno allo stato precedente
-                self.state[1] -= 1
-                env.action_space = np.array([1, 2, 3])
-                action = random.choice(env.action_space)
-                env.step(action)
 
         if action == 1:  # GO DOWN
             self.state[1] -= 1
-            if (state[1] >= starting_grid_pos):
-                # Il movimento resta all'interno della griglia
-                pass
-            else:
-                # Il movimento esce dai limiti della griglia:
-                #print("Mossa in basso non valida!")
-                self.state[1] += 1  # Ritorno allo stato precedente
-                env.action_space = np.array([0, 2, 3])
-                action = random.choice(env.action_space)
-                env.step(action)
 
         if action == 2:  # GO LEFT
             self.state[0] -= 1
-            if (state[0] >= starting_grid_pos):
-                # Il movimento resta all'interno della griglia
-                pass
-            else:
-                #print("Mossa a sinistra non valida!")
-                self.state[0] += 1
-                env.action_space = np.array([0, 1, 3])
-                action = random.choice(env.action_space)
-                env.step(action)
 
         if action == 3:  # GO RIGHT
             self.state[0] += 1
-            if (state[0] <= max_grid_length):
-                # Il movimento resta all'interno della griglia
-                pass
-            else:
-                #print("Mossa a destra non valida!")
-                self.state[0] -= 1
-                env.action_space = np.array([0, 1, 2])
-                action = random.choice(env.action_space)
-                env.step(action)
 
         # Grow path length by 1
         self.path_length += 1
 
         # Calculate the euclidian distance from the current stat to the target state
-        # Calcolo la distanza euclidea del nuovo stato
         new_target_distance = np.linalg.norm(self.state - self.target_state)
 
         # Calculate reward
         if self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
-            reward = 100
-            print("TARGET STATE RAGGIUNTO, termine episodio")
-        elif new_target_distance <= old_target_distance:
-            reward = -1
+            reward = +2000
+            # TARGET STATE REACHED, end episode
+
+        elif new_target_distance < old_target_distance:
+            # Getting closer to the target state
+            reward = +1
         else:
-            reward = 0
+            # Walking away from the target state
+            reward = -1
 
         # Check if search is done
         if self.path_length > episode_length:
             done = True
-            print ("Fine episodio causa step terminati")
+            # Steps fineshed, end episode
         elif self.state[0] == self.target_state[0] and self.state[1] == self.target_state[1]:
-            # Se arrivo nello stato target allora l'episodio termina
+            # Target state reached, end episode
             done = True
-            self.success= True
-            print("Fine episodio causa target state raggiunto")
+            self.success = True
         else:
             done = False
 
@@ -134,7 +120,7 @@ class Grid(Env):
 
     def reset(self):
         # Reset path temperature
-        self.state = np.array([0, 0])
+        self.state = np.array([starting_grid_pos, starting_grid_pos])
         # Reset path
         self.path_length = 1
         return self.state
@@ -142,82 +128,279 @@ class Grid(Env):
 
 ########## END GRID CLASS ##################
 
-# Crea un'istanza della classe Grid
+
 env = Grid()
 
-episodes = 30
 
-
-# Learning rate: how much you accept the new value vs the old value.
-lr = 0.8
-
-# Gamma: discount factor
-gamma = 0.9
-
-
-# Aggiornamento dei Q-values nella matrice Q_table
-def update_qtable(state, action, reward, new_state):
+# Updating the Q-values in the Q_table array
+def update_qtable(state, action, reward, new_state, learning_rate, gamma):
     # Cumulative reward
-    # DA RIVEDERE VALORE DI LR (aka learning rate)
-    Q_table[state, action] += lr * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state, action])
+    Q_table[state, action] += learning_rate * (reward + gamma * np.max(Q_table[new_state]) - Q_table[state, action])
+
+    # print("Q_TABLE INPUTS: \n state: ", state, " action: ", action, " reward: ", reward, " new state: ", new_state,
+    #       " learning rate: ", learning_rate, " gamma: ", gamma)
+
+    row_numb = 0
+    # print("#### Q TABLE #### \n")
+    # for x in Q_table:
+    #     print("row ", row_numb, " ", x)
+    #     row_numb += 1
 
     return Q_table
 
 
-# Mappa gli stati della matrice dell'enviorment in un vettore lungo 25, come i tutti i possibili stati
+# Maps the states of the environment matrix into a vector of length 25, such as all possible states
 def mapping_state(next_state):
     # [0,0] -> 0; [0,1] -> 1 ... [1,0] -> 5
-
+    # print ("mapping_state input: ", next_state)
     new_pos = (next_state[1] * 5) + (next_state[0] * 1)
 
     return new_pos
 
 
-for episode in range(episodes):
-    print("######### NEW EPISODE ################")
-    state = env.reset()
-    done = False
-    score = 0
+############## LEARNING PHASE ############################
+def run(learning_rate, gamma, episodes, episodes_length, run_number, Q_table):
+    # print ("Learning Phase")
+    global state, success_number
 
-    # Resett Q_table ad ogni episodio
-    Q_table = np.zeros(shape=(25, 4), dtype=float)
-    while not done:
-        env.render()
-        # Ripristino il vettore delle azioni in modo da poterle eseguire tutte di nuovo
+    success_rate = 0
+    output = []
+
+    for episode in range(episodes):
+        #print("######### NEW EPISODE ################")
+        #print("Q_table new episode: \n", Q_table)
+        state = env.reset()
+        done = False
+        score = 0
+
+        # Action available
         env.action_space = np.array([0, 1, 2, 3])
 
-        epsilon = 1 / env.path_length
-        not_epislon = 1 - (1 / env.path_length)
+        while not done:
+            env.render()
 
-        if random.uniform(0, 1) < epsilon:
-            """ Explore: select a random action   """
-            # Choose action
-            action = random.choice(env.action_space)
-            print("Exploration action: ", action)
-            state2 = mapping_state(state)
-            # Perform action
-            next_state, reward, done, info = env.step(action)
+            epsilon = 1 / env.path_length
+            not_epislon = 1 - (1 / env.path_length)
+            if random.uniform(0, 1) < epsilon:
+                """ Explore: select a random action   """
+                # Choose action
+                action = random.choice(env.action_space)
+                # print("Exploration action: ", action)
+                do_action = env.oracle(state, action)
+                yes = do_action
+                state2 = mapping_state(state)
+                mapped_state = mapping_state(state)
+                if yes:  # The action stays in the boundaries, I execute it
 
-            mapped_state = mapping_state(next_state)
-            # Aggiorna la Q_table
-            update_qtable(state2, action, reward, mapped_state)
-            score += reward
-        else:
+                    # Perform action
+                    next_state, reward, done, info = env.step(action)
+
+                    # Update the Q_table
+                    update_qtable(state2, action, reward, next_state, learning_rate, gamma)
+                    # print("state: ", state2, " action: ", action, " next state: ", next_state, " reward: ", reward)
+
+                    # print("q-table:\n", Q_table)
+                    if reward == 2000:
+                        success_number += 1
+
+                    score += reward
+                else:  # Agent go out of boundiries
+                    # Update the Q_table
+                    reward = -100
+                    update_qtable(state2, action, reward,
+                                  state2, learning_rate,
+                                  gamma)  # send the current state as next_state
+                    score += reward
+                    env.success = False
+                    done = True
+
+            else:
+                """ Exploit: select the action with max value (future reward)  """
+                state2 = mapping_state(state)
+                action_qvalues = Q_table[state2].tolist()
+                max_action_value = max(action_qvalues)
+                # Choose action
+                actions = [i for i, x in enumerate(action_qvalues) if x == max_action_value]
+                # print("Actions available: ", actions)
+                action = random.choice(actions)
+                # print("Exploit action: ", action)
+                do_action = env.oracle(state, action)
+                mapped_state = mapping_state(state)
+                yes = do_action
+                if yes:  # The action stays in the boundaries, I execute it
+
+                    # Perform action
+                    next_state, reward, done, info = env.step(action)
+                    # Update the Q_table
+                    update_qtable(state2, action, reward, next_state, learning_rate, gamma)
+                    # print("state: ", state2, " action: ", action, " next state: ", next_state, " reward: ", reward)
+                    # print("q-table:\n", Q_table)
+                    if reward == 2000:
+                        success_number += 1
+                    score += reward
+                else:  # Agent go out of boundaries
+                    reward = -100
+                    # Update the Q_table
+                    update_qtable(state2, action, reward,
+                                  state2, learning_rate,
+                                  gamma)  # send the current state as next_state
+                    score += reward
+                    env.success = False
+                    done = True
+    return Q_table
+
+############## TESTING ###################
+# In the testing phase, the agent will always perform exploitation moves. The Q_table does not need to be updated
+def test(episodes, episode_length, Q_table):
+
+    global state
+    success_number = 0
+    success_rate = 0
+    episode_totalScore = 0
+    episode_totalLength = 0
+
+    output = []
+
+    for episode in range(episodes):
+        state = env.reset()
+        done = False
+        score = 0
+
+        # Action available
+        env.action_space = np.array([0, 1, 2, 3])
+        while not done:
+            env.render()
             """ Exploit: select the action with max value (future reward)  """
             state2 = mapping_state(state)
             action_qvalues = Q_table[state2].tolist()
             max_action_value = max(action_qvalues)
-            #Choose action
-            action = action_qvalues.index(max_action_value)
-            print ("Exploit action: ", action)
-            #Perform action
-            next_state, reward, done, info = env.step(action)
-            mapped_state = mapping_state(next_state)
-            # Aggiorna la Q_table
-            update_qtable(state2, action, reward, mapped_state)
-            score += reward
+            # Choose action
+            actions = [i for i, x in enumerate(action_qvalues) if x == max_action_value]
+            action = random.choice(actions)
+            do_action = env.oracle(state, action)
+            mapped_state = mapping_state(state)
+            yes = do_action
+            if yes:  # L'azione resta nei boundaries, la eseguo
+
+                # Perform action
+                next_state, reward, done, info = env.step(action)
+                # Aggiorna la Q_table
+                # update_qtable(state2, action, reward, next_state, learning_rate, gamma)
+                if reward == 2000:
+                    success_number += 1
+                score += reward
+            else:  # ESCO DAI BOUNDARIES
+                reward = -100
+                # Aggiorna la Q_table
+                # update_qtable(state2, action, reward,
+                #               state2, learning_rate,
+                #               gamma)
+                score += reward
+                env.success = False
+                done = True
+
+        episode_totalScore += score
+        episode_totalLength += env.path_length
+        output = [episode, score, env.path_length, env.success, success_rate]
+        # print ("EPISODE OUTPUT: Episode: {} , Score: {} , env.pathLength: {}  , env.success: {} , success_rate: {} ".format(output[0],
+        #                                 output[1], output[2], output[3], output[4]))
+
+    success_rate = success_number / episodes
+    episode_AvgScore = episode_totalScore / episodes
+    episode_avgLength = episode_totalLength /episodes
+
+    episode_output= [success_rate, episode_AvgScore, episode_avgLength, env.success]
+    return episode_output
 
 
-    print('EPISODE:{} SCORE:{} STEP:{}, SUCCESS:{} \nFINAL Q_table:{}'.format(episode, score, env.path_length,env.success,  Q_table))
+if __name__ == "__main__":
+    episode_length = 200
+    learn_episodes = 100
 
-print("Fine programma")
+    test_episode = 1
+
+    # Learning rate: how much you accept the new value vs the old value.
+    # Gamma: discount factor
+
+    learning_rate = [0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 2.0, 3.0, 4.0, 5.0]
+    gamma = [0.1, 0.3, 0.5, 0.7, 0.9]
+
+    with open('NewOutput.csv', 'w') as f:
+        f.write("Test Number,Success,Score,Steps,Learning Rate,Gamma\n")
+        best_score = 0
+        best_QTABLE = np.zeros(shape=(25, 4), dtype=float)
+        best_lr = 0
+        best_gamma = 0
+        best_length = episode_length + 2
+
+
+        run_number = 0
+        # Env inherited from Open AI Gym
+
+
+        for x in learning_rate:
+            for y in gamma:
+                Q_table = np.zeros(shape=(25, 4), dtype=float)
+
+                results = []
+                Q_table = run(x, y, learn_episodes, episode_length, run_number, Q_table)
+                run_number += 1
+
+                # results = [success_rate, episode_AvgScore, episode_avgLength, env.success]
+                results = test (test_episode, episode_length, Q_table)
+
+                actual_score = results[1]
+                success = results[3]
+                actual_length = results[2]
+
+                print("Test Number: {}, success: {}, Avg_score: {}, AvgLength: {}, Learning Rate: {}, gamma: {}".format(
+                                                                                                    run_number,
+                                                                                                    results[0],
+                                                                                                    results[1],
+                                                                                                    results[2],
+                                                                                                    x, y))
+
+                final_results = []
+                final_results.extend([run_number, results[0], results[1], results[2], x , y])
+
+                for result in final_results:
+                    f.write(str(result))
+                    f.write(",")
+
+                f.write("\n")
+
+
+                # STRATEGY 1 = Let's take The Q_table with the best AVG_Score
+                # STRATEGY  2 = Let's take The Q_table with the lowest path_length AND success = True
+                if (success == True):
+                    if (actual_length < best_length):
+                        # STRATEGY 2
+                        best_length = actual_length
+                        best_score = actual_score
+                        best_QTABLE = Q_table
+                        best_gamma = y
+                        best_lr = x
+                    else:
+                        pass
+
+
+                elif (best_score > actual_score):
+                    pass
+                else:
+                    # STRATEGY 1
+                    best_score = actual_score
+                    best_QTABLE = Q_table
+                    best_gamma = y
+                    best_lr = x
+
+
+
+        print ("\nEnd Testing \n")
+        print ("\n BEST Q TABLE: \n", best_QTABLE, " \nhas the best score: ", best_score, " with learning rate: ", best_lr,
+               " and gamma: ", best_gamma)
+
+
+
+
+
+    f.close()

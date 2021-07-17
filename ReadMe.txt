@@ -41,6 +41,19 @@ To generate and solve the maze with dijkstra execute the following command:
 - run maze_generator.py (you can change settings in main)
 - run dijkstra.py
 
-The results can be seen graphically in the folders that have been generated
+The results can be seen graphically in the folders that have been generated.
+
+
+# Simple Q-learn approach
+Requirments for the Simple q-learning approach: 
+ - gym
+ - numpy
+
+To generate the and solve the problem for a 5x5 maze, 
+open the directory "QLearn" and execute "python main.py". This will train the Q-tables
+and do the tests. A csv file is created with the data outputted from the programm.
+This csv file is used as input for the "experiments.py" script that analyze the data.
+
+
 
 
